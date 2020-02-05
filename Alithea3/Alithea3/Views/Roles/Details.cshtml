@@ -1,0 +1,156 @@
+﻿@using Alithea3.Models
+@model Alithea3.Models.Role
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+    var listUser = ViewBag.listUserAccount as List<UserAccountRole>;
+    var totalPage = ((int?) ViewBag.TotalPage).Value;
+    var currentPage = ((int?) ViewBag.CurrentPage).Value;
+    var limit = ((int?) ViewBag.Limit).Value;
+    int indexSo = (currentPage-1)*limit + 1;
+}
+
+<div class="row">
+    <div class="col-lg-6 col-xl-4 grid-margin stretch-card style-detail">
+        <div class="card">
+           
+            <div class="card-body">
+                <h5 class="card-title">
+                    <b>ID # @Html.DisplayFor(model => model.RoleId)</b>
+                </h5>
+                <p class="card-text">
+                    <b>@Html.DisplayNameFor(model => model.RoleName): </b>
+                    @Html.DisplayFor(model => model.RoleName)
+                </p>
+                <div class="d-sm-flex">
+                    @Html.ActionLink("Sửa", "Edit", new { id = Model.RoleId }, new { @class = "btn btn-sm btn-warning mr-3" })
+                    <a class="btn btn-light btn-sm mt-2 mt-sm-0" href="@Url.Action("Index")">
+                        Quay lại
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body table-responsive">
+                <h4 class="card-title">Các tài khoản có vai trò @Model.RoleName</h4>
+                <p class="card-description d-sm-flex">
+                    <span class="text-muted text-small my-auto">Click product name to see detail</span>
+                    <br class="d-sm-none" />
+                </p>
+                <table class="table" id="update-student">
+                    <thead class="text-primary">
+                        <tr>
+                            <th>
+                                #
+                            </th>
+                            <th class="text-center">
+                                Tài khoản
+                            </th>
+                            <th class="text-center d-none d-xl-table-cell">
+                                Ảnh
+                            </th>
+                            <th class="text-center d-none d-xl-table-cell">
+                                Vai trò
+                            </th>
+                            <th class="text-center d-none d-lg-table-cell">
+                                Sửa
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (listUser != null)
+                        {
+                            foreach (var item in listUser)
+                            {
+
+                                <tr>
+                                    <td>
+                                        <b class="text-small">@indexSo</b>
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="#" class="badge w-100 badge-gradient-primary w-100">
+                                            @Html.DisplayFor(modelItem => item.UserAccount.Username)
+                                        </a>
+                                    </td>
+                                    <td class="text-center d-none d-xl-table-cell">
+                                        <img src="@Html.DisplayFor(modelItem => item.UserAccount.Image)" width="100px" height="120px" />
+                                    </td>
+                                    <td class="text-center">
+                                        <b class="text-small">@Html.DisplayFor(modelItem => item.Role.RoleName)</b>
+                                    </td>
+                                    <td class="text-center d-none d-lg-table-cell">
+                                        <a class="badge badge-warning" href="#">
+                                            <span class="mdi mdi-pencil-box-outline"></span>
+                                        </a>
+                                    </td>
+                                </tr>
+
+                                {
+                                    indexSo++;
+                                }
+
+                            }
+                        }
+                    </tbody>
+                </table>
+                @if (totalPage > 1)
+                {
+                    <nav aria-label="Page navigation" style="margin-top: 20px;">
+                        <ul class="pagination">
+                            @if (currentPage > 1)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1&limit=@(limit)" aria-label="First">
+                                        Đầu
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=@(currentPage-1)&limit=@(limit)" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                            }
+                            @if (currentPage > 2)
+                            {
+                                <li class="page-item"><a class="page-link" href="?page=@(currentPage-2)&limit=@(limit)">@(currentPage - 2)</a></li>
+                            }
+                            @if (currentPage > 1)
+                            {
+                                <li class="page-item"><a class="page-link" href="?page=@(currentPage-1)&limit=@(limit)">@(currentPage - 1)</a></li>
+                            }
+                            <li class="active page-item"><a class="page-link" href="?page=@(currentPage)&limit=@(limit)">@currentPage</a></li>
+                            @if (totalPage - currentPage > 0)
+                            {
+                                <li class="page-item"><a class="page-link" href="?page=@(currentPage+1)&limit=@(limit)">@(currentPage + 1)</a></li>
+                            }
+                            @if (totalPage - currentPage > 1)
+                            {
+                                <li class="page-item"><a class="page-link" href="?page=@(currentPage+2)&limit=@(limit)">@(currentPage + 2)</a></li>
+                            }
+                            @if (currentPage < totalPage)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=@(currentPage+1)&limit=@(limit)" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=@totalPage&limit=@(limit)" aria-label="Next">
+                                        Cuối
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </nav>
+                }
+            </div>
+        </div>
+    </div>
+
+</div>

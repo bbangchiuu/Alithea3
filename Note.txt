@@ -1,0 +1,3 @@
+Database dùng SqlServer
+
+Chú ý: dùng Pakage Manager Console để chạy Seeder Database

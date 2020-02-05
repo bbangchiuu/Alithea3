@@ -1,0 +1,152 @@
+﻿@using Alithea3.Models
+@using Attribute = Alithea3.Models.Attribute
+@model Alithea3.Models.Product
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var listProductCategories = ViewBag.listProductCategories as List<ProductCategory>;
+    var listPro = ViewBag.listPro as List<Attribute>;
+}
+
+<div class="row">
+    <div class="col-lg-6 col-xl-4 grid-margin stretch-card style-detail">
+        <div class="card">
+            <div class="card-img-top text-center pt-3">
+                <img class="border-primary" src="@Html.DisplayFor(model => model.ProductImage)"
+                     style="max-width: 100%; max-height: 180px; padding: 4px; border: 2px solid; border-radius: 100%" alt="Avatar" />
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">
+                    <b>ID # @Html.DisplayFor(model => model.ProductID)</b>
+                </h5>
+                <p class="card-text">
+                    <b>@Html.DisplayNameFor(model => model.ProductName): </b>
+                    @Html.DisplayFor(model => model.ProductName)
+                </p>
+                <p class="card-text">
+                    <b>Danh mục: </b>
+                    @for (int i = 0; i < listProductCategories.Count; i++)
+                    {
+                        <a href="@Url.Action("Details", "Categories", new {id = listProductCategories[i].CategoryID})" class="badge badge-info">
+                            @listProductCategories[i].Category.CategoryName
+                        </a>
+                    }
+                </p>
+                <p class="card-text">
+                    <b>@Html.DisplayNameFor(model => model.ProductDescription): </b>
+                    @Html.DisplayFor(model => model.ProductDescription)
+                </p>
+                <p class="card-text">
+                    <b>@Html.DisplayNameFor(model => model.CreatedAt): </b>
+                    @Html.DisplayFor(model => model.CreatedAt)
+                </p>
+                <p class="card-text">
+                    <b>@Html.DisplayNameFor(model => model.UnitPrice): </b>
+                    @Html.DisplayFor(model => model.UnitPrice)
+                </p>
+                <p class="card-text">
+                    <b>@Html.DisplayNameFor(model => model.VAT): </b>
+                    @(Model.VAT != null ? Model.VAT : 0) %
+                </p>
+                <p class="card-text">
+                    <b>@Html.DisplayNameFor(model => model.Quantity): </b>
+                    @Html.DisplayFor(model => model.Quantity)
+                </p>
+                <p class="card-text">
+                    <b>@Html.DisplayNameFor(model => model.Status): </b>
+                    <span class="badge @(Model.Status == Product.ProductStatus.DeActive ? "badge-gradient-secondary" : "badge-gradient-primary")">
+                        @Html.DisplayFor(model => model.Status)
+                    </span>
+                </p>
+
+                <div class="d-sm-flex">
+                    @Html.ActionLink("Sửa", "Edit", new { id = Model.ProductID }, new { @class = "btn btn-sm btn-warning mr-3" })
+                    <a class="btn btn-light btn-sm mt-2 mt-sm-0" href="@Url.Action("Index")">
+                        Quay lại
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body table-responsive">
+                <h4 class="card-title">Product</h4>
+                <p class="card-description d-sm-flex">
+                    <span class="text-muted text-small my-auto">Click product name to see detail</span>
+                    <br class="d-sm-none" />
+
+                </p>
+                <table class="table" id="update-student">
+                    <thead class="text-primary">
+                    <tr>
+                        <th>
+                            #
+                        </th>
+                        <th>
+                            Tên sản phẩm
+                        </th>
+                        <th class="text-center d-none d-xl-table-cell">
+                            Ảnh
+                        </th>
+                        <th class="text-center d-none d-xl-table-cell">
+                            Đơn giá
+                        </th>
+                        <th class="text-center d-none d-xl-table-cell">
+                            Sô lượng
+                        </th>
+                          
+                        <th class="text-center d-none d-lg-table-cell">
+                            Màu
+                        </th>
+                        <th class="text-center d-none d-lg-table-cell">
+                            Sửa
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @if (listPro != null && listPro.Count > 0)
+                    {
+                        for (var i = 0; i < listPro.Count; i++)
+                        {
+
+                            <tr>
+                                <td>
+                                    <b class="text-small">@i</b>
+                                </td>
+                                <td>
+                                    <a href="#" class="badge w-100 badge-gradient-primary w-100">
+                                        @Html.DisplayFor(modelItem => listPro[i].Product.ProductName)
+                                    </a>
+                                </td>
+                                <td class="text-center d-none d-xl-table-cell">
+                                    <img src="@Html.DisplayFor(modelItem => listPro[i].ProductImage)" width="100px" height="120px" />
+                                </td>
+                                <td>
+                                    <b class="text-small">@Html.DisplayFor(modelItem => listPro[i].UnitPrice)</b>
+                                </td>
+                                <td>
+                                    <b class="text-small">@Html.DisplayFor(modelItem => listPro[i].Quantity)</b>
+                                </td>
+                                <td>
+                                    <b class="text-small">@Html.DisplayFor(modelItem => listPro[i].Color.NameColor)</b>
+                                </td>
+                                <td class="text-center d-none d-lg-table-cell">
+                                    <a class="badge badge-warning" href="#">
+                                        <span class="mdi mdi-pencil-box-outline"></span>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+
+                    </tbody>
+                </table>
+             
+            </div>
+        </div>
+    </div>
+</div>

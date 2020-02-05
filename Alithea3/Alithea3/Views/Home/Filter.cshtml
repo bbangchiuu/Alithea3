@@ -1,0 +1,238 @@
+﻿@using Alithea3.Models
+
+@{
+    ViewBag.Title = "Filter";
+    Layout = "~/Views/Shared/_HomeLayout.cshtml";
+    var listCategories = ViewBag.listCategories as List<Category>;
+
+    var productFilter = ViewBag.productFilter;
+    var categoryFilter = ViewBag.categoryFilter;
+
+    var totalPage = ((int?) ViewBag.TotalPage).Value;
+    var currentPage = ((int?) ViewBag.CurrentPage).Value;
+    var limit = ((int?) ViewBag.Limit).Value;
+
+    var currentPara = ViewBag.currentPara;
+}
+    <div class="detail12">
+        <div class="container">
+            <div class="row">
+                <div class="nav-detail col-sm-12 wow bounceInLeft" data-wow-delay="0.1s">
+                    <nav aria-label="breadcrumb col-sm-6">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="/Home">Trang chủ</a></li>
+                            <li class="breadcrumb-item"><a href="/Home/ListCategory">Danh mục</a></li>
+                            @if (categoryFilter != null)
+                            {
+                                for (int i = 0; i < categoryFilter.Count; i++)
+                                {
+                                    Category category = categoryFilter[i] as Category;
+                                    <li class="breadcrumb-item active" aria-current="page">
+                                        @category.CategoryName
+                                    </li>
+                                }
+                            }
+                        </ol>
+
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="#">Giá</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">
+                                @if (ViewBag.MinPrice != null)
+                                {
+                                    <span>@string.Format("{0:C}", ViewBag.MinPrice)</span>
+                                }
+                                else if (ViewBag.MaxPrice != null)
+                                {
+                                    <span>@string.Format("{0:C}", 0)</span>
+                                }
+
+                                @if (ViewBag.MaxPrice != null)
+                                {
+                                    <span>-></span>
+                                    <span>@string.Format("{0:C}", ViewBag.MaxPrice)</span>
+                                }
+                            </li>
+                        </ol>
+                    </nav>
+                </div>
+                <div class="col-sm-3 ">
+                @using (Html.BeginForm("Filter", "Home", FormMethod.Get))
+                {
+                    @Html.AntiForgeryToken()
+                <div class="col-sm-12">
+                    <div class="row">
+                        <div class="col-sm-12 block1 box">
+                            <p class="wow bounceIn" data-wow-delay="0.1">
+                                Tìm theo giá
+                            </p>
+                            <hr>
+                            <div class="block1">
+                                <div class="form-group">
+                                    <label>Giá thấp nhất</label>
+                                    <input class="form-control" type="number" name="MinPrice" value="@ViewBag.MinPrice"/>
+                                </div>
+                                <div class="form-group">
+                                    <label>Giá cao nhất</label>
+                                    <input class="form-control" type="number" name="MaxPrice" value="@ViewBag.MaxPrice"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 block1 box">
+                            <div class="form-group">
+                                <label for="exampleFormControlSelect1" class="wow bounceIn" data-wow-delay="0.2">
+                                    Chọn danh mục
+                                </label>
+                                <select class="form-control wow bounceIn" data-wow-delay="0.3" name="selectpicker" id="exampleFormControlSelect1">
+                                    <option value="0">
+                                        Danh mục
+                                    </option>
+                                    @if (listCategories != null && listCategories.Count > 0)
+                                    {
+                                        for (int i = 0; i < listCategories.Count; i++)
+                                        {
+                                            <option value="@listCategories[i].CategoryID">
+                                                @listCategories[i].CategoryName
+                                            </option>
+                                        }
+                                    }
+
+                                </select>
+                            </div>
+                            <div class="col-md-10" id="listCat">
+                                @if (categoryFilter != null)
+                                {
+                                    for (int i = 0; i < categoryFilter.Count; i++)
+                                    {
+                                        Category category = categoryFilter[i] as Category;
+                                        <div class="badge badge-info" id="item-@category.CategoryID">
+                                            <input type="hidden" name="id" value="@category.CategoryID" />
+                                            @category.CategoryName
+                                            <span class="glyphicon glyphicon-remove" onclick="delCate(@category.CategoryID)" style="margin-left: 10px;">X</span>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
+                        <div class="col-sm-12 m-b-30 wow bounceIn" data-wow-delay="0.2">
+                            <div class="form-group">
+                                <div class="row">
+                                    <button type="submit" class="btn btn-primary btn-block kieu2">Lọc</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                }
+                </div>
+                <div class="col-sm-9">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="row">
+                                @if (productFilter != null && productFilter.Count > 0)
+                                {
+                                    for (int i = 0; i < productFilter.Count; i++)
+                                    {
+                                        Product product = productFilter[i] as Product;
+                                <a href="/Home/Details/@product.ProductID">
+                                    <div class="col-sm-4 m-b-30 wow bounceIn" data-wow-delay="1ms">
+
+                                        <div class="card col-sm-12 box a-product" style="width: 18rem; height: 500px;">
+                                            <div class="card-img">
+                                                <img src="@product.ProductImage" style="height: 300px;" class="card-img-top" alt="...">
+                                            </div>
+                                            <div class="row">
+                                                <div class="card-body">
+                                                    <p class="card-title text-center" style="height: 70px; overflow: hidden;">
+                                                        @product.ProductName
+                                                    </p>
+                                                    <div class="card-text text-center">
+                                                        <p>
+                                                            <strong class="price-zone">
+                                                                @string.Format("{0:C}", product.UnitPrice)
+                                                            </strong>
+                                                        </p>
+                                                    </div>
+                                                    <div class="row text-center col-md-6 offset-md-3">
+                                                        <a href="/Home/Details/@product.ProductID">
+                                                            <button type="submit" class="btn btn-primary kieu2 col-sm-12">
+                                                                Đặt hàng
+                                                            </button>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                                    }
+                                }
+                            </div>
+                            @if (totalPage > 0)
+                            {
+                                <nav aria-label="...">
+                                    <ul class="pagination">
+                                        @if (currentPage > 1)
+                                        {
+                                            <li class="page-item">
+                                                <a class="page-link" href="@(currentPara)page=@(currentPage-1)&limit=@(limit)"><span aria-hidden="true">&laquo;</span></a>
+                                            </li>
+                                        }
+                                        @if (currentPage > 2)
+                                        {
+                                            <li class="page-item"><a class="page-link" href="@(currentPara)page=@(currentPage-2)&limit=@(limit)">@(currentPage - 2)</a></li>
+                                        }
+                                        @if (currentPage > 1)
+                                        {
+                                            <li class="page-item"><a class="page-link" href="@(currentPara)page=@(currentPage-1)&limit=@(limit)">@(currentPage - 1)</a></li>
+                                        }
+                                        <li class="page-item active">
+                                            <a class="page-link" href="#">@currentPage<span class="sr-only">(current)</span></a>
+                                        </li>
+                                        @if (totalPage - currentPage > 0)
+                                        {
+                                            <li class="page-item"><a class="page-link" href="@(currentPara)page=@(currentPage+1)&limit=@(limit)">@(currentPage + 1)</a></li>
+                                        }
+                                        @if (totalPage - currentPage > 1)
+                                        {
+                                            <li class="page-item"><a class="page-link" href="@(currentPara)page=@(currentPage+2)&limit=@(limit)">@(currentPage + 2)</a></li>
+                                        }
+                                        @if (totalPage - currentPage > 0)
+                                        {
+                                            <li class="page-item">
+                                                <a class="page-link" href="@(currentPara)page=@(currentPage+2)&limit=@(limit)"><span aria-hidden="true">&raquo;</span></a>
+                                            </li>
+                                        }
+
+                                    </ul>
+                                </nav>
+                            }
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+    </div>
+    @section Scripts {
+        <script>
+            function delCate(item) {
+                var idDiv = "#item-" + item;
+                $(idDiv).remove();
+            }
+
+            $(document).ready(function () {
+                console.log("lalal");
+                $("#exampleFormControlSelect1").change(function () {
+                    console.log($(this).val() + " - " + $("#exampleFormControlSelect1 option:selected").text());
+                    console.log($("#listCat").text().includes($("#exampleFormControlSelect1 option:selected").text()));
+                    console.log($("#exampleFormControlSelect1 option:selected").text());
+                    console.log($(this).val());
+                    console.log($(this).val() > 0);
+                    if ($(this).val() > 0) {
+                        var text = '<div class="badge badge-info" id="item-' + $(this).val() + '"><input type="hidden" name="id" value="' + $(this).val() + '" />' + $("#exampleFormControlSelect1 option:selected").text() + '<span class="glyphicon glyphicon-remove" onclick="delCate(' + $(this).val() + ')" style="margin-left: 10px;">X</span></div>';
+                        $("#listCat").append(text);
+                    }
+                });
+            });
+        </script>
+    }

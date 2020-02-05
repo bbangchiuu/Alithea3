@@ -1,0 +1,101 @@
+﻿@using Alithea3.Models
+@{
+    ViewBag.Title = "Home Page";
+    Layout = "~/Views/Shared/_HomeLayout.cshtml";
+    List<Category> listCategories = ViewBag.listCategories as List<Category>;
+}
+
+<div class="col-sm-12 img-bgr">
+    <header class="to">
+        <div id="getting-started" class="wow bounceInLeft" data-wow-delay="1s"></div>
+        <img src="~/Content/public/images/s3.png" alt="" class="hoatiet1 wow bounceInUp" data-wow-delay="0.5s">
+        <img src="~/Content/public/images/s4.png" alt="" class="hoatiet2 wow bounceInUp" data-wow-delay="0.6s">
+        <img src="~/Content/public/images/s4.png" alt="" class="hoatiet3 wow bounceInUp" data-wow-delay="0.7s">
+        <img src="~/Content/public/images/s3.png" alt="" class="hoatiet4 wow bounceInUp" data-wow-delay="0.8s">
+        <div class="chuto wow bounceInLeft" data-wow-delay="0.9s">Đếm ngược ngày Valentine!</div>
+    </header>
+</div>
+<section class="session1">
+    <div class="row">
+        @if (TempData["Success"] != null)
+        {
+            <h2 class="text-center title-block wow bounceIn m-t-100 text-success" data-wow-delay="0.1s" data-wow-offset="50">
+                @TempData["Success"]
+            </h2>
+        }
+        <h2 class="text-center title-block wow bounceIn m-t-100" data-wow-delay="0.1s" data-wow-offset="50">
+            Quần áo Nam
+        </h2>
+        <div class="col-lg-12 grid-uniform">
+            <div class="row">
+                @Html.Action("QuanAoNam", "Shop")
+            </div>
+        </div>
+    </div>
+</section>
+<section class="session1">
+    <div class="row">
+
+        <h2 class="text-center title-block wow bounceIn m-t-100" data-wow-delay="0.1s" data-wow-offset="50">
+            Quần áo Nữ
+        </h2>
+        <div class="col-lg-12 grid-uniform">
+            <div class="row">
+                @Html.Action("QuanAoNu", "Shop")
+            </div>
+        </div>
+    </div>
+</section>
+<section class="session1">
+    <div class="row">
+
+        <h2 class="text-center title-block wow bounceIn m-t-100" data-wow-delay="0.1s" data-wow-offset="50">
+            Giày dép Nam
+        </h2>
+        <div class="col-lg-12 grid-uniform">
+            <div class="row">
+                @Html.Action("GiayNam", "Shop")
+            </div>
+        </div>
+    </div>
+</section>
+<section class="session1">
+    <div class="row">
+
+        <h2 class="text-center title-block wow bounceIn m-t-100" data-wow-delay="0.1s" data-wow-offset="50">
+            Giày dép Nữ
+        </h2>
+        <div class="col-lg-12 grid-uniform">
+            <div class="row">
+                @Html.Action("GiayNu", "Shop")
+            </div>
+        </div>
+    </div>
+</section>
+<div class="session1">
+    <div class="row">
+        <h2 class="text-center title-block cart-title wow bounceIn m-t-100" data-wow-delay="0.1s" data-wow-offset="50">
+            Danh mục
+        </h2>
+        @if (listCategories != null)
+        {
+            for (int i = 0 ; i < listCategories.Count ; i++)
+            {
+                <a href="/Home/Filter/@listCategories[i].CategoryID" class="col-sm-4 cate1 wow bounceInUp" data-wow-delay="1ms">
+                    <div class=" text-center">
+                        <div class="tinto">
+                            <img src="@listCategories[i].CategoryImage" alt="" class="layer1">
+                            <div class="xam"></div>
+
+                            <div class="gradient"></div>
+                            <div class="hinhvuong"></div>
+                            <div class="chuto1">
+                                @listCategories[i].CategoryName
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            }
+        }
+    </div>
+</div>

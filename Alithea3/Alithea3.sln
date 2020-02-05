@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29613.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Alithea3", "Alithea3\Alithea3.csproj", "{815D2BA4-CFD2-4A83-A808-820385DCCF33}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{815D2BA4-CFD2-4A83-A808-820385DCCF33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{815D2BA4-CFD2-4A83-A808-820385DCCF33}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{815D2BA4-CFD2-4A83-A808-820385DCCF33}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{815D2BA4-CFD2-4A83-A808-820385DCCF33}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {059CCC79-B8BB-453E-8539-7AAFD2F2E457}
+	EndGlobalSection
+EndGlobal

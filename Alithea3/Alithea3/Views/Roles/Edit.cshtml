@@ -1,0 +1,68 @@
+﻿@model Alithea3.Models.Role
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<div class="row">
+    <div class="col-md-8 mx-auto grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                @if (TempData["Error"] != null)
+                {
+                    <h4 class="text-danger">@TempData["Error"]</h4>
+                }
+                <h4 class="card-title">Chức vụ</h4>
+                <p class="card-description">Sửa</p>
+                @using (Html.BeginForm())
+                {
+                    @Html.AntiForgeryToken()
+
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    @Html.HiddenFor(model => model.RoleId)
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.RoleName)
+                        @Html.EditorFor(model => model.RoleName, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.RoleName, "", new { @class = "text-danger" })
+                    </div>
+                  
+                    <input type="submit" class="btn btn-gradient-primary mr-2" value="Cập nhật" />
+                    <button type="button" class="btn btn-gradient-danger mr-3" data-toggle="modal" data-target="#myModal">
+                        Xóa
+                    </button>
+                    <a class="btn btn-light" href="@Url.Action("Index")">
+                        Hủy
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Xóa?</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                Bạn có chắc chắn
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                @using (Html.BeginForm("Delete/" + Model.RoleId, "Roles", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    <input type="submit" value="Có" class="btn btn-default btn btn-danger" />
+                }
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Không</button>
+            </div>
+
+        </div>
+    </div>
+</div>
