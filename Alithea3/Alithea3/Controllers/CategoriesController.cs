@@ -22,6 +22,8 @@ namespace Alithea3.Controllers
         private ProductCategoryService _productCategoryService = new ProductCategoryService();
 
         // GET: Categories
+        //AllowAnonymous: bỏ qua author, vào thẳng controller
+        [AllowAnonymous]
         public ActionResult Index(int? page, int? limit)
         {
           

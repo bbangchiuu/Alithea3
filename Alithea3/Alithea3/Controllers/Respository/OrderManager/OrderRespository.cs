@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using Alithea3.Models;
+using Attribute = Alithea3.Models.Attribute;
 
 namespace Alithea3.Controllers.Respository.OrderManager
 {
@@ -57,56 +59,80 @@ namespace Alithea3.Controllers.Respository.OrderManager
 
         public bool createOrder(List<Product> listShoppingCart, Order newOrder)
         {
-            using (var transaction = _db.Database.BeginTransaction())
+            try
             {
-                try
+                using (var transaction = _db.Database.BeginTransaction())
                 {
-                    newOrder.Display();
-                    _db.Orders.Add(newOrder);
-                    _db.SaveChanges();
-
-                    var listOrderDetail = new List<OrderDetail>();
-                    for (int i = 0; i < listShoppingCart.Count; i++)
+                    try
                     {
-                        int? idColor = null;
-                        if (listShoppingCart[i].Color != 0)
+                        newOrder.Display();
+
+                        var listOrderDetail = new List<OrderDetail>();
+                        for (int i = 0; i < listShoppingCart.Count; i++)
                         {
-                            idColor = listShoppingCart[i].Color;
+                            int? idColor = null;
+                            if (listShoppingCart[i].Color != 0)
+                            {
+                                idColor = listShoppingCart[i].Color;
+                            }
+
+                            int? idSize = null;
+                            if (listShoppingCart[i].Size != 0)
+                            {
+                                idSize = listShoppingCart[i].Size;
+                            }
+
+                            listOrderDetail.Add(new OrderDetail()
+                            {
+                                OrderID = newOrder.OrderID,
+                                ProductID = listShoppingCart[i].ProductID,
+                                Quantity = listShoppingCart[i].Quantity,
+                                UnitPrice = listShoppingCart[i].UnitPrice,
+                                ColorID = idColor,
+                                NameColor = listShoppingCart[i].NameColor,
+                                SizeID = idSize,
+                                NameSize = listShoppingCart[i].NameSize,
+                                ProductImage = listShoppingCart[i].ProductImage,
+                                VAT = listShoppingCart[i].VAT
+                            });
+
+//                            if (idColor != null)
+//                            {
+//                                var attr = _db.Attributes.Where(a => a.ColorID == idColor.Value && 
+//                                                                     a.ProductID == listShoppingCart[i].ProductID).ToList();
+//
+//                                attr[0].Quantity -= listShoppingCart[i].Quantity;
+//                                _db.Entry(attr).State = EntityState.Modified;
+//
+//                            }
+//                            else
+//                            {
+//                                var product = _db.Products.Find(listShoppingCart[i].ProductID);
+//                                product.Quantity -= listShoppingCart[i].Quantity;
+//                                _db.Entry(product).State = EntityState.Modified;
+//                            }
                         }
 
-                        int? idSize = null;
-                        if (listShoppingCart[i].Size != 0)
-                        {
-                            idSize = listShoppingCart[i].Size;
-                        }
+                        newOrder.OrderDetails = listOrderDetail;
+                        _db.Orders.Add(newOrder);
 
-                        listOrderDetail.Add(new OrderDetail()
-                        {
-                            OrderID = newOrder.OrderID,
-                            ProductID = listShoppingCart[i].ProductID,
-                            Quantity = listShoppingCart[i].Quantity,
-                            UnitPrice = listShoppingCart[i].UnitPrice,
-                            ColorID = idColor,
-                            NameColor = listShoppingCart[i].NameColor,
-                            SizeID = idSize,
-                            NameSize = listShoppingCart[i].NameSize,
-                            ProductImage = listShoppingCart[i].ProductImage,
-                            VAT = listShoppingCart[i].VAT
-                        });
+                        _db.SaveChanges();
+
+                        transaction.Commit();
+                        return true;
                     }
-
-                    _db.OrderDetails.AddRange(listOrderDetail);
-                    _db.SaveChanges();
-
-                    transaction.Commit();
-                    return true;
+                    catch (Exception e)
+                    {
+                        Debug.WriteLine("loi: " + e.Message);
+                        transaction.Rollback();
+                        return false;
+                    }
                 }
-                catch (Exception e)
-                {
-                    Debug.WriteLine(e);
-                    transaction.Rollback();
-                    return false;
-                }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                return false;
             }
         }
 
