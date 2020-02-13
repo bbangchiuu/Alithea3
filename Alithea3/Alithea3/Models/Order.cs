@@ -75,6 +75,8 @@ namespace Alithea3.Models
             Deleted = -1
         }
 
+        public ICollection<OrderDetail> OrderDetails { get; set; }
+
         IEnumerable<ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
         {
             MyDbContext db = new MyDbContext();

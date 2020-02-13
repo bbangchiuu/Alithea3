@@ -1,0 +1,65 @@
+﻿@model Alithea3.Models.Attribute
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Attribute</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Color.NameColor)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Color.NameColor)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Product.RoleNumber)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Product.RoleNumber)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ProductImage)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ProductImage)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.UnitPrice)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UnitPrice)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Quantity)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Quantity)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>

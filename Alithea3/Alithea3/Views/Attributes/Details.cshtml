@@ -1,0 +1,59 @@
+﻿@model Alithea3.Models.Attribute
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Attribute</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Color.NameColor)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Color.NameColor)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Product.RoleNumber)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Product.RoleNumber)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ProductImage)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ProductImage)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.UnitPrice)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UnitPrice)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Quantity)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Quantity)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.ID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
