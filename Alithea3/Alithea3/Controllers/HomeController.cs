@@ -15,6 +15,7 @@ using Alithea3.Controllers.Service.ShopManager;
 using Alithea3.Controllers.Service.UserAccountManager;
 using Alithea3.Models;
 using LinqKit;
+using Microsoft.Ajax.Utilities;
 using Attribute = System.Attribute;
 
 namespace Alithea3.Controllers
@@ -139,17 +140,19 @@ namespace Alithea3.Controllers
             return View(product);
         }
 
-        public ActionResult Login()
+        public ActionResult Login(string ReturnUrl = "")
         {
-            if (CheckUser())
-            {
-                return Redirect("/Home/Index");
-            }
+//            if (CheckUser())
+//            {
+//                return Redirect("/Home/Index");
+//            }
+
+            ViewBag.ReturnUrl = ReturnUrl;
             return View();
         }
 
         [HttpPost]
-        public ActionResult Login([Bind(Include = "Username,Password")] UserAccount userAccount)
+        public ActionResult Login([Bind(Include = "Username,Password")] UserAccount userAccount, string ReturnUrl = "")
         {
             var errors = userAccount.ValidateLogin();
             if (errors.Count > 0)
@@ -162,6 +165,11 @@ namespace Alithea3.Controllers
             if (getUserAccount != null)
             {
                 Session[SessionName.UserAccount] = getUserAccount;
+                if (!ReturnUrl.IsNullOrWhiteSpace())
+                {
+                    return Redirect(ReturnUrl);
+                }
+
                 return Redirect("/Home/Index");
             }
             else

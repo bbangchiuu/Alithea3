@@ -28,7 +28,7 @@
             <div class="col-md-6 login-form-2 offset-md-3 wow bounceIn" data-wow-delay="0.1s">
 
                 <h3>Đăng nhập</h3>
-                @using (Html.BeginForm("Login", "Home", FormMethod.Post, htmlAttributes: new { @class = "col-sm-12" }))
+                @using (Html.BeginForm("Login", "Home", new { ReturnUrl = ViewBag.ReturnUrl },FormMethod.Post, htmlAttributes: new { @class = "col-sm-12" }))
                 {
                     @Html.AntiForgeryToken()
                     <form action="" method="POST">
