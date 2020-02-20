@@ -31,8 +31,8 @@ namespace Alithea3.Controllers
                 Debug.WriteLine("no null");
             }
 
-            ViewBag.CurrentPage = page == null ? 1 : page.Value;
-            ViewBag.Limit = limit == null ? 10 : limit.Value;
+            ViewBag.CurrentPage = page ?? 1;
+            ViewBag.Limit = limit ?? 10;
             ViewBag.Start = hashtable["Start"];
             ViewBag.End = hashtable["End"];
             ViewBag.TotalPage = hashtable["totalPage"];

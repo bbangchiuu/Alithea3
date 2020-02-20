@@ -1,0 +1,119 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<div class="row">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body table-responsive">
+
+                <div id="curve_chart"></div>
+
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/series-label.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <script type="text/javascript">
+        var series = [];
+        var dataChart = [];
+        $.ajax({
+            url: "/Api/Orders",
+            type: "get", // chọn phương thức gửi là post
+            data: {
+                start: $('#startTime').val(),
+                end: $('#endTime').val()
+            },
+            dataType: "json", // dữ liệu trả về dạng text
+
+            success: function (result) {
+                console.log(result);
+                for (var i = 0; i < result.length; i++) {
+                    var datetime = new Date(result[i].datetime);
+                    var dateChart = datetime.getDate() + "/" + (datetime.getMonth() + 1) + "/" + datetime.getFullYear();
+
+                    dataChart.push(dateChart);
+                    series.push(result[i].price);
+                }
+
+                DrawChart();
+            }
+        });
+
+        function DrawChart() {
+            Highcharts.chart('curve_chart', {
+                title: {
+                    text: 'Doanh thu từ ' + dataChart[0] + ' đến ' + dataChart[dataChart.length - 1]
+                },
+
+                subtitle: {
+                    text: 'Kết quả'
+                },
+
+                yAxis: {
+                    title: {
+                        text: 'Doanh số'
+                    }
+                },
+
+                xAxis: [
+                    {
+                        categories: dataChart,
+                        labels: {
+                            formatter: function() {
+                                return '<span style="color:blue;">' + this.value + '</span>';
+                            },
+                            step: 3
+                        }
+                    }],
+
+                legend: {
+                    layout: 'vertical',
+                    align: 'right',
+                    verticalAlign: 'middle'
+                },
+
+                plotOptions: {
+                    series: {
+                        label: {
+                            connectorAllowed: false
+                        },
+                    }
+                },
+
+                series: [
+                    {
+                        name: 'Doanh số',
+                        data: series
+                    }],
+
+                responsive: {
+                    rules: [{
+                        condition: {
+                            maxWidth: 500
+                        },
+                        chartOptions: {
+                            legend: {
+                                layout: 'horizontal',
+                                align: 'center',
+                                verticalAlign: 'bottom'
+                            }
+                        }
+                    }]
+                }
+
+            });
+        }
+    </script>
+}
+
