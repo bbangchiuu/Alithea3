@@ -57,10 +57,10 @@
                             {
                             <tr id="ShoppingCart-item-@i">
                                 <td>
-                                    <a href="/Home/Details/@listProducts[i].ProductID">@listProducts[i].ProductName</a>
+                                    <a href="/Home/Details/@listProducts[i].GetId">@listProducts[i].ProductName</a>
                                 </td>
                                 <td>
-                                    <a href="#">
+                                    <a href="/Home/Details/@listProducts[i].GetId">
                                         <img src="@listProducts[i].ProductImage" width="100px">
                                     </a>
                                 </td>

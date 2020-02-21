@@ -46,6 +46,7 @@ namespace Alithea3.Controllers
         }
 
         // GET: Products/Details/5
+        [EncryptedActionParameterAttribute]
         public ActionResult Details(int? id)
         {
 
@@ -118,6 +119,7 @@ namespace Alithea3.Controllers
         }
 
         // GET: Products/Edit/5
+        [EncryptedActionParameterAttribute]
         public ActionResult Edit(int? id)
         {
 

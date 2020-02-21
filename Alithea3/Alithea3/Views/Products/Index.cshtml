@@ -65,7 +65,7 @@
                                         <b class="text-small">@indexSo</b>
                                     </td>
                                     <td class="text-center">
-                                        <a href="/Products/Details/@Html.DisplayFor(model => item.ProductID)" class="badge w-100 badge-gradient-primary w-100">
+                                        <a href="/Products/Details/@item.GetId" class="badge w-100 badge-gradient-primary w-100">
                                             @Html.DisplayFor(modelItem => item.RoleNumber)
                                         </a>
                                     </td>
@@ -90,7 +90,7 @@
                                         </a>
                                     </td>
                                     <td class="text-center d-none d-lg-table-cell">
-                                        <a class="badge badge-warning" href="@Url.Action("Edit", "Products", new {id = item.ProductID})">
+                                        <a class="badge badge-warning" href="/Products/Edit/@item.GetId">
                                             <span class="mdi mdi-pencil-box-outline"></span>
                                         </a>
                                     </td>

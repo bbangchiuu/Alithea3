@@ -125,6 +125,7 @@ namespace Alithea3.Controllers
             return View();
         }
 
+        [EncryptedActionParameterAttribute]
         public ActionResult Details(int? id)
         {
             if (id == null)

@@ -9,14 +9,19 @@ namespace Alithea3.Models
 {
     public static class Encrypt
     {
+        public static string GetURL(string value)
+        {
+            value = "id=" + value;
+            return EncryptAndHash(value, SessionName.KeyEncrypt);
+        }
+
         public static string EncryptAndHash(string value, string key)
         {
             var des = new MACTripleDES();
             var md5 = new MD5CryptoServiceProvider();
             des.Key = md5.ComputeHash(Encoding.UTF8.GetBytes(key));
-            string encrypted = Convert.ToBase64String(des.ComputeHash(Encoding.UTF8.GetBytes(value))) +
-                               '-' +
-                               Convert.ToBase64String(Encoding.UTF8.GetBytes(value));
+            string encrypted = Convert.ToBase64String(des.ComputeHash(Encoding.UTF8.GetBytes(value))) + 
+                               '-' + Convert.ToBase64String(Encoding.UTF8.GetBytes(value));
 
             return encrypted;
         }
@@ -31,9 +36,9 @@ namespace Alithea3.Models
 
             decoded = decoded.Replace(" ", "+");
             string value = decoded.Split('-').Length > 1
-                ? Encoding.UTF8.GetString(Convert.FromBase64String(decoded.Split('1')[1]))
+                ? Encoding.UTF8.GetString(Convert.FromBase64String(decoded.Split('-')[1]))
                 : string.Empty;
-            string saveHash = Encoding.UTF8.GetString(Convert.FromBase64String(decoded.Split('1')[0]));
+            string saveHash = Encoding.UTF8.GetString(Convert.FromBase64String(decoded.Split('-')[0]));
             string calculateHash = Encoding.UTF8.GetString(des.ComputeHash(Encoding.UTF8.GetBytes(value)));
 
             if (saveHash != calculateHash)

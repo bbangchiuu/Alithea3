@@ -115,6 +115,14 @@ namespace Alithea3.Models
             return errors;
         }
 
+        public string GetId
+        {
+            get
+            {
+                return "?q=" + Encrypt.GetURL(ProductID.ToString());
+            }
+        }
+
         public void Display()
         {
             Debug.WriteLine("Id: " + ProductID);

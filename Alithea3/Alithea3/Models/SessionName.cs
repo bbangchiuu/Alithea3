@@ -12,5 +12,7 @@ namespace Alithea3.Models
         public static string ShoppingCart = "ShoppingCart";
         public static string TotalPrice = "TotalPrice";
         public static string TotalQuantity = "TotalQuantity";
+
+        public static string KeyEncrypt = "ENCRYPT_URL_KEY";
     }
 }
