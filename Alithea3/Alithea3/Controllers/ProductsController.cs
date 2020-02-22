@@ -11,6 +11,7 @@ using Alithea3.Controllers.Service.CategoryManager;
 using Alithea3.Controllers.Service.ProductCateogryManager;
 using Alithea3.Controllers.Service.ProductManager;
 using Alithea3.Models;
+using Microsoft.Ajax.Utilities;
 
 namespace Alithea3.Controllers
 {
@@ -223,6 +224,18 @@ namespace Alithea3.Controllers
 
             TempData["Error"] = "Đã xảy ra lỗi";
             return RedirectToAction("Edit/" + id);
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public ActionResult AjaxFindByProductName(string name)
+        {
+            if (name.IsNullOrWhiteSpace())
+            {
+                name = "";
+            }
+            var list = db.Products.Where(p => p.ProductName.Contains(name)).Select(p => p.ProductName).ToList();
+            return Json(list);
         }
 
         protected override void Dispose(bool disposing)

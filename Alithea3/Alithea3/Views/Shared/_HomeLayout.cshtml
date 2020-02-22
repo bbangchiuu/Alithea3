@@ -26,6 +26,7 @@
     <link rel="stylesheet" href="~/Content/public/stylesheets/ipadto.css">
     <link rel="stylesheet" href="~/Content/public/stylesheets/ipadnho.css">
     <link rel="stylesheet" href="~/Content/public/stylesheets/iphone.css">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <style>
         .logo-loader {
             margin-top: 40vh;
@@ -60,7 +61,7 @@
                 <form action="/Home/Search" method="GET" class="col-sm-9 wow bounceIn" data-wow-delay="0.2s">
                     <div class="form-group search-input">
                         <label for=""></label>
-                        <input type="text" class="form-control" value="@ViewBag.productname" name="productname" id="" aria-describedby="helpId"
+                        <input type="text" class="form-control" value="@ViewBag.productname" name="productname" id="searchProduct" aria-describedby="helpId"
                                placeholder="Tìm kiếm sản phẩm......">
                     </div>
                     <button type="submit" class="nut-search"><i class="fa fa-search"></i></button>
@@ -202,9 +203,9 @@
 
     <script src="~/Content/public/javascripts/ShoppingCart.js?p=12"></script>
     <script src="~/Content/public/javascripts/formatMoney.js?p=12"></script>
-    <script src="~/Scripts/globalize.culture.en-GB.min.js"></script>
 
-    <script src="~/Content/public/javascripts/register.js?p=12345"></script>
+<script src="~/Content/public/javascripts/register.js?p=12345"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     @RenderSection("scripts", required: false)
 
     <script>
@@ -216,6 +217,26 @@
             $(".loader-wrapper").html(text);
             $(".loader-wrapper").delay(1800).fadeOut();
             $("html").css("overflow-y", "scroll");
+        });
+
+        $("#searchProduct").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "/Products/AjaxFindByProductName",
+                    type: "POST",
+                    dataType: "json",
+                    data: { name: request.term },
+                    success: function (data) {
+                        console.log(request);
+                        console.log(response);
+                        console.log(data);
+                        response($.map(data,
+                            function (item) {
+                                return { label: item, value: item };
+                            }));
+                    }
+                });
+            }
         });
     </script>
 </body>

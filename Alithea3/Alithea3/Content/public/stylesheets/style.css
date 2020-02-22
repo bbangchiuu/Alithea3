@@ -421,7 +421,7 @@ li.drd.wow.bounceIn {
     position: fixed;
     top:0px;
     left: 0px;
-    z-index: 99999999;
+    z-index: 10;
     padding-top: 10px;
     transition: 0.4s;
     background: #e5101d;
