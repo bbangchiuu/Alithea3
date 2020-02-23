@@ -16,12 +16,12 @@
     {
         customer = Session[SessionName.Customer] as Customer;
     }
-    HttpCookie addressCookie = Request.Cookies["Address"];
-    var address = "";
-    if (addressCookie != null)
-    {
-        address = addressCookie["Tinh"] + ", " + addressCookie["Huyen"] + ", ";
-    }
+//    HttpCookie addressCookie = Request.Cookies["Address"];
+//    var address = "";
+//    if (addressCookie != null)
+//    {
+//        address = addressCookie["Tinh"] + ", " + addressCookie["Huyen"] + ", ";
+//    }
 }
 
 <div class="detail8">
@@ -124,7 +124,7 @@
                             Địa chỉ:
                         </div>
                         <div class="col-sm-3 float-left">
-                            @(address + customer.Address)
+                            @(customer.Tinh + ", " + customer.Huyen + ", " + customer.Address)
                         </div>
                     </div>
                     <div class="col-md-12 mb-3">

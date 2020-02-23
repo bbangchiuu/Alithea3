@@ -67,7 +67,8 @@ namespace Alithea3.Controllers.Service.OrderManager
             }
 
             hashtable.Add("totalPage", Math.Ceiling((double)listOrder.Count() / limit.Value));
-            hashtable.Add("listOrder", listOrder.OrderByDescending(o => o.Status).Skip((page.Value - 1) * limit.Value).Take(limit.Value).ToList());
+            hashtable.Add("listOrder", listOrder.OrderByDescending(o => o.OrderDate).
+                Skip((page.Value - 1) * limit.Value).Take(limit.Value).ToList());
             return hashtable;
         }
 

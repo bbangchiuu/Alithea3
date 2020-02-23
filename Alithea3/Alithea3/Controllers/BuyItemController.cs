@@ -131,15 +131,15 @@ namespace Alithea3.Controllers
                 errors.Add("Huyen", "Bạn chưa chọn huyện, thành phố");
             }
 
-            HttpCookie addressCookie = new HttpCookie("Address");
-            addressCookie["Tinh"] = tinh;
-            addressCookie["Huyen"] = huyen;
-            Response.Cookies.Add(addressCookie);
+            //HttpCookie addressCookie = new HttpCookie("Address");
+            //addressCookie["Tinh"] = tinh;
+            //addressCookie["Huyen"] = huyen;
+            //Response.Cookies.Add(addressCookie);
             
             if (errors.Count == 0)
             {
-               
-//                customer.Address = tinh + ", " + huyen + ", " + customer.Address;
+                customer.Tinh = tinh;
+                customer.Huyen = huyen;
                 Session[SessionName.Customer] = customer;
                 return RedirectToAction("XacNhanDonHang");
             }
@@ -177,10 +177,9 @@ namespace Alithea3.Controllers
             }
 
             var createAt = DateTime.Now;
-            HttpCookie addressCookie = Request.Cookies["Address"];
+            //HttpCookie addressCookie = Request.Cookies["Address"];
 
-            if (_shopService.createOrder(Session[SessionName.ShoppingCart] as List<Product>, createAt, Session[SessionName.Customer] as Customer, 
-                addressCookie["Tinh"], addressCookie["Huyen"],
+            if (_shopService.createOrder(Session[SessionName.ShoppingCart] as List<Product>, createAt, Session[SessionName.Customer] as Customer,
                 (int) Session[SessionName.TotalQuantity], (double) Session[SessionName.TotalPrice], comment,
                 (Session[SessionName.UserAccount] as UserAccount)?.UserID))
             {

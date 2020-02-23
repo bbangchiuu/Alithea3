@@ -16,13 +16,13 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alithea</title>
+    <title>@ViewBag.Title</title>
     <link rel="stylesheet" href="~/Content/public/vendor/css/bootstrap.min.css">
     <link rel="stylesheet" href="~/Content/public/vendor/css/bootstrap-slider.min.css">
     <link rel="stylesheet" href="~/Content/public/vendor/font-awesome.css">
     <link rel="stylesheet" href="~/Content/public/vendor/all.css">
     <link rel="stylesheet" href="~/Content/public/vendor/css/animate.css">
-    <link rel="stylesheet" href="~/Content/public/stylesheets/style.css?p=2">
+    <link rel="stylesheet" href="~/Content/public/stylesheets/style.css?p=3">
     <link rel="stylesheet" href="~/Content/public/stylesheets/ipadto.css">
     <link rel="stylesheet" href="~/Content/public/stylesheets/ipadnho.css">
     <link rel="stylesheet" href="~/Content/public/stylesheets/iphone.css">
@@ -85,7 +85,7 @@
                                 <a class="dropdown-item" href="/Home/DeleteSessionUser">Đăng xuất</a>
                                 @if (userAccount.admin == UserAccount.Decentralization.Admin)
                                 {
-                                    <a class="dropdown-item" href="/Orders">Admin</a>
+                                    <a class="dropdown-item" href="/Dashboard">Admin</a>
                                 }
                             </div>
                         </div>

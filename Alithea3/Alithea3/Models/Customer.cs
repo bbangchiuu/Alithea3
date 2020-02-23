@@ -23,6 +23,9 @@ namespace Alithea3.Models
 
         public string Email { get; set; }
 
+        public string Tinh { get; set; }
+        public string Huyen { get; set; }
+
         public Dictionary<string, string> ValidateRegister()
         {
             var errors = new Dictionary<string, string>();

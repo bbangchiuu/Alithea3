@@ -1,4 +1,5 @@
 ﻿@using Alithea3.Models
+@using Microsoft.Ajax.Utilities
 @model Alithea3.Models.Customer
 @{
     ViewBag.Title = "ThongTinKhacHang";
@@ -9,7 +10,7 @@
         errors = ViewBag.errors;
     }
 
-    HttpCookie addressCookie = Request.Cookies["Address"];
+//    HttpCookie addressCookie = Request.Cookies["Address"];
 }
 
 <div class="detail8">
@@ -53,9 +54,9 @@
                     <div class="thongtinkh mb-3">
                         <label>Tỉnh</label>
                         <select class="form-control" id="tinh-thanh">
-                            @if (addressCookie != null)
+                            @if (!Model.Tinh.IsNullOrWhiteSpace())
                             {
-                                <option>@addressCookie["Tinh"]</option>
+                                <option>@Model.Tinh</option>
                             }
                             else
                             {
@@ -70,9 +71,9 @@
                     <div class="thongtinkh mb-3">
                         <label>Huyện</label>
                         <select class="form-control" id="huyen-tp">
-                            @if (addressCookie != null)
+                            @if (!Model.Huyen.IsNullOrWhiteSpace())
                             {
-                                <option>@addressCookie["Huyen"]</option>
+                                <option>@Model.Huyen</option>
                             }
                             else
                             {
@@ -90,8 +91,8 @@
                         @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @class = "form-control" } })
                         @Html.ValidationMessageFor(model => model.Address, errors.ContainsKey("Address") ? errors["Address"] : "", new { @class = "text-danger", @id = "validateAddress" })
                     </div>
-                    <input type="hidden" name="tinh" id="tinh" value="@(addressCookie != null ? @addressCookie["Tinh"] : "")">
-                    <input type="hidden" name="huyen" id="huyen" value="@(addressCookie != null ? @addressCookie["Huyen"] : "")">
+                    <input type="hidden" name="tinh" id="tinh" value="@Model.Tinh">
+                    <input type="hidden" name="huyen" id="huyen" value="@Model.Huyen">
                     <div class="thongtinkh mb-3">
                         <button class="btn btn-success" type="submit" name="submitttkh" onclick="return checkthongtin()">Xác nhận đơn hàng</button>
                     </div>

@@ -212,8 +212,7 @@ namespace Alithea3.Controllers.Service.ShopManager
                     {
                         listShoppingCart[i].VAT = 0;
                     }
-                    listShoppingCart[i].totalPriceOne = listShoppingCart[i].UnitPrice * listShoppingCart[i].Quantity * listShoppingCart[i].VAT.Value / 100
-                                                        + listShoppingCart[i].UnitPrice * listShoppingCart[i].Quantity;
+                    listShoppingCart[i].totalPriceOne = listShoppingCart[i].UnitPrice * listShoppingCart[i].Quantity * listShoppingCart[i].VAT.Value / 100 + listShoppingCart[i].UnitPrice * listShoppingCart[i].Quantity;
                     totalPrice += listShoppingCart[i].UnitPrice * listShoppingCart[i].Quantity * listShoppingCart[i].VAT.Value / 100
                         + listShoppingCart[i].UnitPrice * listShoppingCart[i].Quantity;
 
@@ -228,21 +227,21 @@ namespace Alithea3.Controllers.Service.ShopManager
             return hashtable;
         }
 
-        public bool createOrder(List<Product> listShoppingCart, DateTime createAt, Customer customer, string Tinh, string Huyen, int totalQuantity, double totalPrice, string comment, int? userID)
+        public bool createOrder(List<Product> listShoppingCart, DateTime createAt, Customer customer, int totalQuantity, double totalPrice, 
+            string comment, int? userId)
         {
             try
             {
                 var address = "";
-                if (Tinh.IsNullOrWhiteSpace())
+                if (!customer.Tinh.IsNullOrWhiteSpace())
                 {
-                    address += Tinh + ", ";
+                    address += customer.Tinh + ", ";
                 }
 
-                if (Huyen.IsNullOrWhiteSpace())
+                if (!customer.Huyen.IsNullOrWhiteSpace())
                 {
-                    address += Huyen + ", ";
+                    address += customer.Huyen + ", ";
                 }
-
                 address += customer.Address;
 
                 var order = new Order()
@@ -254,7 +253,7 @@ namespace Alithea3.Controllers.Service.ShopManager
                     Quantity = totalQuantity,
                     TotalPrice = totalPrice,
                     Status = Order.StatusOrder.DeActive,
-                    UserID = userID,
+                    UserID = userId,
                     Commnet = comment,
                     FullName = customer.FullName,
                     Email = customer.Email,
