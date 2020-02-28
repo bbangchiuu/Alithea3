@@ -1,0 +1,30 @@
+{
+  "sProcessing": "<div class='box-loading-data'><div class='spinner-boder'></div><div class='spinner-text'>Đang tải dữ liệu</div>",
+  "sLengthMenu": "Số dòng trên một trang _MENU_",
+  "thousands": ",",
+  "sZeroRecords": "<div class='data-empty d-flex flex-column justify-content-center algin-items-center'>Chưa có dữ liệu để hiện thị</div>",
+  "sInfo": "_START_ - _END_ trong tổng số _TOTAL_ mục",
+  "sInfoEmpty": "0 - 0 trong tổng số 0 mục",
+  "sInfoFiltered": "(được lọc từ _MAX_ mục)",
+  "sInfoPostFix": "",
+  "sUrl": "",
+  "oAria": {
+    "sSortAscending": "Sắp xếp tăng dần",
+    "sSortDescending": "Sắp xếp giảm dần"
+  },
+  "search": "Tìm kiếm",
+  "searchPlaceholder": "Nhập tìm kiếm ...",
+  "loadingRecords": "<div class='spinner-border'></div>",
+  "select": {
+    "rows": {
+      "_": "Đã chọn %d bản ghi",
+      "0": ""
+    }
+  },
+  "paginate": {
+    "first": "Đầu",
+    "last": "Cuối",
+    "previous": "<span>&laquo;</span>",
+    "next": "<span>&raquo;</span>"
+  }
+}

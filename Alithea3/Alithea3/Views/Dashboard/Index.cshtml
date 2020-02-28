@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
@@ -7,13 +6,64 @@
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
+@section style_css{
+   
+    <link rel="stylesheet" type="text/css" href="~/Content/DataTables-1.10.20/css/jquery.dataTables.css">
+}
+<style>
+    .hidden-border {
+        border: none !important;
+    }
+
+    .dataTables_paginate, .dataTables_info{
+        margin-top: 20px;
+    }
+
+    .dataTables_length, .dataTables_filter {
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    .sorting_asc, .sorting_desc, .sorting_1 {
+        background-color: #c0c0c0;
+    }
+</style>
 <div class="row">
     <div class="col-12 grid-margin stretch-card">
         <div class="card">
             <div class="card-body table-responsive">
-
                 <div id="curve_chart"></div>
-
+                <h4 class="card-title" style="margin-top: 5%">Danh sách đơn hàng</h4>
+                <table class="table hidden-border" id="table-order">
+                    <thead class="text-primary">
+                        <tr>
+                            <th class="hidden-border">
+                                #
+                            </th>
+                            <th class="hidden-border">
+                                Mã đơn hàng
+                            </th>
+                            <th class="hidden-border">
+                                Tên
+                            </th>
+                            <th class="hidden-border">
+                                Số điện thoại
+                            </th>
+                            <th class="hidden-border">
+                                Số lượng
+                            </th>
+                            <th class="hidden-border">
+                                Tổng số tiền
+                            </th>
+                            <th class="hidden-border">
+                                Ngày đặt hàng
+                            </th>
+                            <th class="hidden-border">
+                                Trạng thái
+                            </th>
+                        </tr>
+                    </thead>
+                </table>
             </div>
         </div>
     </div>
@@ -24,9 +74,13 @@
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="https://code.highcharts.com/modules/export-data.js"></script>
     <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+    <script type="text/javascript" charset="utf8" src="~/Content/DataTables-1.10.20/js/jquery.dataTables.js?p=6"></script>
     <script type="text/javascript">
         var series = [];
         var dataChart = [];
+        var renderTable;
+
         $.ajax({
             url: "/Api/Orders",
             type: "get", // chọn phương thức gửi là post
@@ -37,7 +91,6 @@
             dataType: "json", // dữ liệu trả về dạng text
 
             success: function (result) {
-                console.log(result);
                 for (var i = 0; i < result.length; i++) {
                     var datetime = new Date(result[i].datetime);
                     var dateChart = datetime.getDate() + "/" + (datetime.getMonth() + 1) + "/" + datetime.getFullYear();
@@ -70,7 +123,7 @@
                     {
                         categories: dataChart,
                         labels: {
-                            formatter: function() {
+                            formatter: function () {
                                 return '<span style="color:blue;">' + this.value + '</span>';
                             },
                             step: 3
@@ -114,6 +167,117 @@
 
             });
         }
+
+        RenderTable();
+        function RenderTable() {
+            renderTable = $('#table-order').DataTable({
+                dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
+                    "<'row'<'col-sm-12'tr>>" +
+                    "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+                processing: true,
+                pagingType: "full_numbers",
+                drawCallback: function () {
+                    var i;
+                    $.each($('#table-order tbody tr td'), function () {
+                        $(this).attr("order-number", i);
+                    });
+                },
+                ajax: {
+                    url: '/ApiAjax/GetListOrder',
+                    complete: function (response) {
+
+                    }
+                },
+                language: {
+                    url: '/Content/DataTables-1.10.20/js/Vietnamese.json?p=3'
+                },
+                columns: [
+                    {
+                        data: null,
+                        orderable: false,
+                        className: 'text-center',
+                        width: '21px'
+                    },
+                    {
+                        data: "RoleNumber",
+                        orderable: true,
+                        className: 'text-center',
+                        render: function (data, type, row, meta) {
+                            return row.RoleNumber;
+                        }
+                    },
+                    {
+                        data: "FullName",
+                        orderable: true,
+                        className: 'text-center',
+                        render: function (data, type, row, meta) {
+                            return row.FullName;
+                        }
+                    },
+                    {
+                        data: "Phone",
+                        orderable: true,
+                        className: 'text-center',
+                        render: function (data, type, row, meta) {
+                            return row.Phone;
+                        }
+                    },
+                    {
+                        data: "Quantity",
+                        orderable: true,
+                        className: 'text-center',
+                        render: function (data, type, row, meta) {
+                            return row.Quantity;
+                        }
+                    },
+                    {
+                        data: "TotalPrice",
+                        orderable: true,
+                        className: 'text-center',
+                        render: function (data, type, row, meta) {
+                            return row.TotalPrice;
+                        }
+                    },
+                    {
+                        data: "OrderDate",
+                        orderable: true,
+                        className: 'text-center',
+                        render: function (data, type, row, meta) {
+                            return row.OrderDate;
+                        }
+                    },
+                    {
+                        data: "Status",
+                        orderable: true,
+                        className: 'text-center',
+                        render: function (data, type, row, meta) {
+                            return row.Status;
+                        }
+                    }
+                ],
+                order: [],
+                initComplete: function (setting, json) {
+                    //var data = json.data;
+                    //console.log(data);
+                }
+            });
+
+            AddIndexCole(renderTable);
+
+        }
+
+        function AddIndexCole(table) {
+            table.on('order.dt search.dt', function () {
+                table.column(0, {
+                    search: 'applied',
+                    order: 'applied',
+                    filter: 'applied'
+                }).nodes().each(function (cell, i) {
+                    cell.innerHTML = i + 1;
+                });
+            }).draw();
+        }
+
     </script>
 }
 

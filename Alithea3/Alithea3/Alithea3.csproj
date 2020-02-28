@@ -145,6 +145,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Content\test\Class1.cs" />
+    <Compile Include="Controllers\ApiAjaxController.cs" />
     <Compile Include="Controllers\Api\OrdersController.cs" />
     <Compile Include="Controllers\Api\UserAccountsController.cs" />
     <Compile Include="Controllers\AttributesController.cs" />
@@ -202,6 +203,7 @@
     <Compile Include="Models\Size.cs" />
     <Compile Include="Models\UserAccount.cs" />
     <Compile Include="Models\UserAccountRole.cs" />
+    <Compile Include="Models\ViewModel\OrdersViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -269,6 +271,35 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\DataTables-1.10.20\css\dataTables.bootstrap.css" />
+    <Content Include="Content\DataTables-1.10.20\css\dataTables.bootstrap.min.css" />
+    <Content Include="Content\DataTables-1.10.20\css\dataTables.bootstrap4.css" />
+    <Content Include="Content\DataTables-1.10.20\css\dataTables.bootstrap4.min.css" />
+    <Content Include="Content\DataTables-1.10.20\css\dataTables.foundation.css" />
+    <Content Include="Content\DataTables-1.10.20\css\dataTables.foundation.min.css" />
+    <Content Include="Content\DataTables-1.10.20\css\dataTables.jqueryui.css" />
+    <Content Include="Content\DataTables-1.10.20\css\dataTables.jqueryui.min.css" />
+    <Content Include="Content\DataTables-1.10.20\css\dataTables.semanticui.css" />
+    <Content Include="Content\DataTables-1.10.20\css\dataTables.semanticui.min.css" />
+    <Content Include="Content\DataTables-1.10.20\css\jquery.dataTables.css" />
+    <Content Include="Content\DataTables-1.10.20\css\jquery.dataTables.min.css" />
+    <Content Include="Content\DataTables-1.10.20\images\sort_asc.png" />
+    <Content Include="Content\DataTables-1.10.20\images\sort_asc_disabled.png" />
+    <Content Include="Content\DataTables-1.10.20\images\sort_both.png" />
+    <Content Include="Content\DataTables-1.10.20\images\sort_desc.png" />
+    <Content Include="Content\DataTables-1.10.20\images\sort_desc_disabled.png" />
+    <Content Include="Content\DataTables-1.10.20\js\dataTables.bootstrap.js" />
+    <Content Include="Content\DataTables-1.10.20\js\dataTables.bootstrap.min.js" />
+    <Content Include="Content\DataTables-1.10.20\js\dataTables.bootstrap4.js" />
+    <Content Include="Content\DataTables-1.10.20\js\dataTables.bootstrap4.min.js" />
+    <Content Include="Content\DataTables-1.10.20\js\dataTables.foundation.js" />
+    <Content Include="Content\DataTables-1.10.20\js\dataTables.foundation.min.js" />
+    <Content Include="Content\DataTables-1.10.20\js\dataTables.jqueryui.js" />
+    <Content Include="Content\DataTables-1.10.20\js\dataTables.jqueryui.min.js" />
+    <Content Include="Content\DataTables-1.10.20\js\dataTables.semanticui.js" />
+    <Content Include="Content\DataTables-1.10.20\js\dataTables.semanticui.min.js" />
+    <Content Include="Content\DataTables-1.10.20\js\jquery.dataTables.js" />
+    <Content Include="Content\DataTables-1.10.20\js\jquery.dataTables.min.js" />
     <Content Include="Content\public\favicon.ico" />
     <Content Include="Content\public\fonts\fontawesome-webfont.svg" />
     <Content Include="Content\public\imagecate\1545485211868-admin.png" />
@@ -2371,6 +2402,7 @@
     <Content Include="Content\public\images\yelp-camp-refactored-roles\views\partials\header.ejs" />
     <Content Include="Content\public\images\yelp-camp-refactored-roles\views\register.ejs" />
     <Content Include="Content\public\json\local.json" />
+    <Content Include="Content\DataTables-1.10.20\js\Vietnamese.json" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
@@ -2467,8 +2499,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\ApiAjax\" />
+    <Folder Include="Views\Api\" />
     <Folder Include="Views\Base\" />
-    <Folder Include="Views\Dashboaed\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
