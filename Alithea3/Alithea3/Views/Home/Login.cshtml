@@ -31,24 +31,30 @@
                 @using (Html.BeginForm("Login", "Home", new { ReturnUrl = ViewBag.ReturnUrl },FormMethod.Post, htmlAttributes: new { @class = "col-sm-12" }))
                 {
                     @Html.AntiForgeryToken()
-                    <form action="" method="POST">
-                        <div class="form-group">
-                            @Html.LabelFor(model => model.Username, htmlAttributes: new { @class = "control-label col-md-5" })
-                            @Html.EditorFor(model => model.Username, new { htmlAttributes = new { @class = "form-control", @PlaceHolder = "Tài khoản" } })
-                            @Html.ValidationMessageFor(model => model.Username, errors.ContainsKey("Username") ? errors["Username"] : "", new { @class = "text-danger" })
-                        </div>
-                        <div class="form-group">
-                            @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label col-md-5" })
-                            @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control", @PlaceHolder = "Mật khẩu" } })
-                            @Html.ValidationMessageFor(model => model.Phone, errors.ContainsKey("Password") ? errors["Password"] : "", new { @class = "text-danger" })
-                        </div>
-                        <div class="form-group">
-                            <input type="submit" class="btnSubmit" value="Đăng nhập" />
-                        </div>
-                        <div class="form-group">
-                            <a href="/Home/Register" class="btnForgetPwd" value="Login">Tạo tài khoản tại đây</a>
-                        </div>
-                    </form>
+            <form action="" method="POST">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Username, htmlAttributes: new { @class = "control-label col-md-5" })
+                    @Html.EditorFor(model => model.Username, new { htmlAttributes = new { @class = "form-control", @PlaceHolder = "Tài khoản" } })
+                    @Html.ValidationMessageFor(model => model.Username, errors.ContainsKey("Username") ? errors["Username"] : "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label col-md-5" })
+                    @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control", @PlaceHolder = "Mật khẩu" } })
+                    @Html.ValidationMessageFor(model => model.Phone, errors.ContainsKey("Password") ? errors["Password"] : "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    <input type="submit" class="btnSubmit" value="Đăng nhập" />
+                </div>
+                <div class="form-group">
+                    <a class="btn btn-facebook" href="/Home/LoginFacebook">
+                        <i class="fa fa-facebook"></i>
+                        Đăng nhập bằng Facebook
+                    </a>
+                </div>
+                <div class="form-group">
+                    <a href="/Home/Register" class="btnForgetPwd" value="Login">Tạo tài khoản tại đây</a>
+                </div>
+            </form>
                 }
             </div>
         </div>

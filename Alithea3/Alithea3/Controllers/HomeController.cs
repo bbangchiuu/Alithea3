@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
@@ -14,6 +15,7 @@ using Alithea3.Controllers.Service.ProductManager;
 using Alithea3.Controllers.Service.ShopManager;
 using Alithea3.Controllers.Service.UserAccountManager;
 using Alithea3.Models;
+using Facebook;
 using LinqKit;
 using Microsoft.Ajax.Utilities;
 using Attribute = System.Attribute;
@@ -321,5 +323,88 @@ namespace Alithea3.Controllers
 
             return false;
         }
+
+        /// <summary>
+        /// start login facebook
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult LoginFacebook()
+        {
+            var fb = new FacebookClient();
+            var loginUrl = fb.GetLoginUrl(new
+            {
+                client_id = ConfigurationManager.AppSettings["FbAppId"],
+                client_secret = ConfigurationManager.AppSettings["FbAppSecret"],
+                redirect_uri = RedirectUri.AbsoluteUri,
+                response_type = "code",
+                scope = "email",
+            });
+            Debug.WriteLine("loginUrl.AbsoluteUri");
+            Debug.WriteLine(loginUrl.AbsoluteUri);
+            return Redirect(loginUrl.AbsoluteUri);
+        }
+
+        private Uri RedirectUri
+        {
+            get
+            {
+                var uriBuilder = new UriBuilder(Request.Url);
+                uriBuilder.Query = null;
+                uriBuilder.Fragment = null;
+                uriBuilder.Path = Url.Action("FacebookCallback");
+                return uriBuilder.Uri;
+            }
+        }
+
+        public ActionResult FacebookCallback(string code)
+        {
+            var fb = new FacebookClient();
+            dynamic result = fb.Post("oauth/access_token", new
+            {
+                client_id = ConfigurationManager.AppSettings["FbAppId"],
+                client_secret = ConfigurationManager.AppSettings["FbAppSecret"],
+                redirect_uri = RedirectUri.AbsoluteUri,
+                code = code
+            });
+
+
+            var accessToken = result.access_token;
+            if (!string.IsNullOrEmpty(accessToken))
+            {
+                fb.AccessToken = accessToken;
+                // Get the user's information, like email, first name, middle name etc
+                dynamic me = fb.Get("me?fields=first_name,middle_name,last_name,id,email");
+                string email = me.email;
+                string userName = me.email;
+                string firstname = me.first_name;
+                string middlename = me.middle_name;
+                string lastname = me.last_name;
+
+                var user = new UserAccount();
+                user.RoleNumber = DateTime.Now.ToFileTimeUtc().ToString();
+                user.Email = email;
+                user.Username = userName;
+                user.Status = UserAccount.UserAccountStatus.Active;
+                user.FullName = firstname + " " + middlename + " " + lastname;
+                user.CreatAt = DateTime.Now;
+                user.UpdateAt = DateTime.Now;
+                user.BirthDay = DateTime.Now;
+
+                string id = me.id;
+                string acsess = accessToken;
+                Debug.WriteLine(acsess);
+                Debug.WriteLine("thong tin user");
+                Debug.WriteLine(id);
+                Debug.WriteLine(user.Email);
+                Debug.WriteLine(user.FullName);
+                //data.UserAccounts.Add(user);
+                //data.SaveChanges();
+
+                Session.Add("UserAccount", user);
+            }
+            return Redirect("/");
+        }
+
+        //end login facebook
     }
 }
