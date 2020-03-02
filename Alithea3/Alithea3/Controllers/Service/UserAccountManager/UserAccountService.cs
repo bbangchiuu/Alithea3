@@ -9,7 +9,7 @@ using Alithea3.Controllers.Respository.UserAccountManager;
 using Alithea3.Models;
 namespace Alithea3.Controllers.Service.UserAccountManager
 {
-    public class UserAccountService
+    public class UserAccountService : BaseService<UserAccount>
     {
         private MyDbContext db = new MyDbContext();
 
@@ -26,6 +26,11 @@ namespace Alithea3.Controllers.Service.UserAccountManager
             userAccount.Image = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQ8xzdv564ewROcTBYDdv51oTD5SgNOCDDwMw4XXIdvxFGyQzn&s";
             
             return _userAccountRepository.CreateAccount(userAccount);
+        }
+
+        public UserAccount CheckAccount(string email)
+        {
+            return _userAccountRepository.CheckAccount(email);
         }
 
         private string HasPass(string pass)

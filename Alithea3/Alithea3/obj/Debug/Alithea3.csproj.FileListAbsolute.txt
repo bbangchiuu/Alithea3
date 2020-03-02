@@ -186,3 +186,5 @@ E:\dotNet_MVC\Alithea3\Alithea3\Alithea3\obj\Debug\Alithea3.pdb
 E:\dotNet_MVC\Alithea3\Alithea3\Alithea3\obj\Debug\Alithea3.csprojAssemblyReference.cache
 E:\dotNet_MVC\Alithea3\Alithea3\Alithea3\bin\Facebook.dll
 E:\dotNet_MVC\Alithea3\Alithea3\Alithea3\bin\Facebook.xml
+E:\dotNet_MVC\Alithea3\Alithea3\Alithea3\obj\Debug\Alithea3.Migrations.typeloginAccount.resources
+E:\dotNet_MVC\Alithea3\Alithea3\Alithea3\obj\Debug\Alithea3.csproj.GenerateResource.cache

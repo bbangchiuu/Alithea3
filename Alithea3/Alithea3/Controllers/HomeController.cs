@@ -381,28 +381,38 @@ namespace Alithea3.Controllers
                 string lastname = me.last_name;
 
                 var user = new UserAccount();
-                user.RoleNumber = DateTime.Now.ToFileTimeUtc().ToString();
-                user.Email = email;
-                user.Username = userName;
-                user.Status = UserAccount.UserAccountStatus.Active;
-                user.FullName = firstname + " " + middlename + " " + lastname;
-                user.CreatAt = DateTime.Now;
-                user.UpdateAt = DateTime.Now;
-                user.BirthDay = DateTime.Now;
+                
+                var checkAccount = _userAccountService.CheckAccount(email);
+                if (checkAccount == null)
+                {
+                    user.Email = email;
+                    user.RoleNumber = DateTime.Now.ToFileTimeUtc().ToString();
+                    user.CreatAt = DateTime.Now;
+                    user.UpdateAt = DateTime.Now;
+                    user.BirthDay = DateTime.Now;
+                    user.loginType = UserAccount.TypeLogin.Facebook;
+                    user.Username = userName;
+                    user.Status = UserAccount.UserAccountStatus.Active;
+                    user.FullName = firstname + " " + middlename + " " + lastname;
+                    user.Password = Guid.NewGuid().ToString();
+                    _userAccountService.createAccount(user);
 
-                string id = me.id;
-                string acsess = accessToken;
-                Debug.WriteLine(acsess);
-                Debug.WriteLine("thong tin user");
-                Debug.WriteLine(id);
-                Debug.WriteLine(user.Email);
-                Debug.WriteLine(user.FullName);
-                //data.UserAccounts.Add(user);
-                //data.SaveChanges();
+                    Session.Add(SessionName.UserAccount, user);
+                    return Redirect("/");
+                }
 
-                Session.Add("UserAccount", user);
+                if (checkAccount.loginType == UserAccount.TypeLogin.Facebook)
+                {
+                    Session.Add(SessionName.UserAccount, checkAccount);
+                    return Redirect("/");
+                }
+               
+                TempData["Error"] = "Tài khoản này đã tồn tại, bạn phải đằng nhập bằng tài khoản và mật khẩu";
+                return Redirect("/Home/Login");
             }
-            return Redirect("/");
+
+            TempData["Error"] = "Đã xảy ra lỗi";
+            return Redirect("/Home/Login");
         }
 
         //end login facebook

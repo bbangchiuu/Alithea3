@@ -87,6 +87,14 @@ namespace Alithea3.Models
             Customer = 0
         }
 
+        public TypeLogin? loginType { get; set; }
+        public enum TypeLogin
+        {
+            Facebook = 1,
+            Google = 2,
+            Twitter = 3
+        }
+
         public ICollection<Order> Orders { get; set; }
         public ICollection<UserAccountRole> UserAccountRoles { get; set; }
 

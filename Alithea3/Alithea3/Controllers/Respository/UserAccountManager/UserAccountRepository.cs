@@ -41,5 +41,18 @@ namespace Alithea3.Controllers.Respository.UserAccountManager
                 return null;
             }
         }
+
+        public UserAccount CheckAccount(string email)
+        {
+            try
+            {
+                return _db.UserAccounts.FirstOrDefault(u => u.Email == email);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                return null;
+            }
+        }
     }
 }
