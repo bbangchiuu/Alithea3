@@ -26,7 +26,7 @@
     <link rel="stylesheet" href="~/Content/public/stylesheets/ipadto.css">
     <link rel="stylesheet" href="~/Content/public/stylesheets/ipadnho.css">
     <link rel="stylesheet" href="~/Content/public/stylesheets/iphone.css">
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="~/Content/themes/base/jquery-ui.css">
     <style>
         .logo-loader {
             margin-top: 40vh;
@@ -200,12 +200,12 @@
     <script src="~/Content/public/vendor/js/wow.js"></script>
     <script src="~/Content/public/vendor/js/jquery.countdown.min.js"></script>
     <script src="~/Content/public/javascripts/admin.js?p=12"></script>
-
+    <script src="~/Scripts/jquery-ui-1.12.1.js"></script>
     <script src="~/Content/public/javascripts/ShoppingCart.js?p=12"></script>
     <script src="~/Content/public/javascripts/formatMoney.js?p=12"></script>
 
-<script src="~/Content/public/javascripts/register.js?p=12345"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="~/Content/public/javascripts/register.js?p=12345"></script>
+
     @RenderSection("scripts", required: false)
 
     <script>
@@ -227,9 +227,6 @@
                     dataType: "json",
                     data: { name: request.term },
                     success: function (data) {
-                        console.log(request);
-                        console.log(response);
-                        console.log(data);
                         response($.map(data,
                             function (item) {
                                 return { label: item, value: item };
