@@ -1,0 +1,96 @@
+﻿<div id="curve_chart"></div>
+
+<script>
+    var series = [];
+    var dataChart = [];
+    document.addEventListener('DOMContentLoaded', function(event) {
+        $.ajax({
+            url: "/Api/Orders",
+            type: "get", // chọn phương thức gửi là post
+            data: {
+                start: $('#startTime').val(),
+                end: $('#endTime').val()
+            },
+            dataType: "json", // dữ liệu trả về dạng text
+
+            success: function (result) {
+                for (var i = 0; i < result.length; i++) {
+                    var datetime = new Date(result[i].datetime);
+                    var dateChart = datetime.getDate() + "/" + (datetime.getMonth() + 1) + "/" + datetime.getFullYear();
+
+                    dataChart.push(dateChart);
+                    series.push(result[i].price);
+                }
+
+                drawChart();
+            }
+        });
+
+        function drawChart() {
+            Highcharts.chart('curve_chart', {
+                title: {
+                    text: 'Doanh thu từ ' + dataChart[0] + ' đến ' + dataChart[dataChart.length - 1]
+                },
+
+                subtitle: {
+                    text: 'Kết quả'
+                },
+
+                yAxis: {
+                    title: {
+                        text: 'Doanh số'
+                    }
+                },
+
+                xAxis: [
+                    {
+                        categories: dataChart,
+                        labels: {
+                            formatter: function () {
+                                return '<span style="color:blue;">' + this.value + '</span>';
+                            },
+                            step: 3
+                        }
+                    }],
+
+                legend: {
+                    layout: 'vertical',
+                    align: 'right',
+                    verticalAlign: 'middle'
+                },
+
+                plotOptions: {
+                    series: {
+                        label: {
+                            connectorAllowed: false
+                        },
+                    }
+                },
+
+                series: [
+                    {
+                        name: 'Doanh số',
+                        data: series
+                    }],
+
+                responsive: {
+                    rules: [{
+                        condition: {
+                            maxWidth: 500
+                        },
+                        chartOptions: {
+                            legend: {
+                                layout: 'horizontal',
+                                align: 'center',
+                                verticalAlign: 'bottom'
+                            }
+                        }
+                    }]
+                }
+
+            });
+        }
+    });
+   
+</script>
+

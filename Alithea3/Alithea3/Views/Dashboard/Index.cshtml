@@ -32,8 +32,38 @@
     <div class="col-12 grid-margin stretch-card">
         <div class="card">
             <div class="card-body table-responsive">
-                <div id="curve_chart"></div>
+                @Html.Partial("__HightChart")
+                
                 <h4 class="card-title" style="margin-top: 5%">Danh sách đơn hàng</h4>
+                <div class="col-md-12">
+                    <p>Lọc</p>
+                    <div class="row">
+                        <div class="col-md-12" id="FilterItemGroup">
+                            <div class="mb-2 filterItem">
+                                <button type="button" class="removeFilterItem btn btn-danger ml-1">x</button>
+                                <div class="dropdown d-inline-block ml-1">
+
+                                    <button class="btn btn-light dropdown-toggle" type="button" id="filterItemContent" data-value="true" data-toggle="dropdown" aria-haspopup="true" aria-expanded="False">
+                                        Chứa
+                                    </button>
+
+                                    <div class="dropdown-menu" aria-labelledby="filterItemContent">
+                                        <a style="color: rebeccapurple" class="dropdown-item filterItemChangeContent" data-value="false">
+                                            Không chứa
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <input type="text" class="form-control col-md-3 d-inline-block ml-1 txtFilterItemContent" />
+                                <button type="button" class="btn btn-behance addFilterItem">+</button>
+                            </div>
+                        </div>
+                        <div class="ml-3 mt-3">
+                            <button class="btn btn-primary" id="FilterItemApply">Áp dụng</button>
+                            <button class="btn btn-warning" id="FilterItemCancel">Hủy</button>
+                        </div>
+                    </div>
+                </div>
                 <table class="table hidden-border" id="table-order">
                     <thead class="text-primary">
                         <tr>
@@ -77,207 +107,209 @@
 
     <script type="text/javascript" charset="utf8" src="~/Content/DataTables-1.10.20/js/jquery.dataTables.js?p=6"></script>
     <script type="text/javascript">
-        var series = [];
-        var dataChart = [];
         var renderTable;
+        var dataTable;
 
-        $.ajax({
-            url: "/Api/Orders",
-            type: "get", // chọn phương thức gửi là post
-            data: {
-                start: $('#startTime').val(),
-                end: $('#endTime').val()
-            },
-            dataType: "json", // dữ liệu trả về dạng text
+        $(document).ready(function() {
+            RenderTable();
+            function RenderTable() {
+                renderTable = $('#table-order').DataTable({
+                    dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
+                        "<'row'<'col-sm-12'tr>>" +
+                        "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+                    processing: true,
+                    pagingType: "full_numbers",
+                    drawCallback: function () {
+                        var i;
+                        $.each($('#table-order tbody tr td'), function () {
+                            $(this).attr("order-number", i);
+                        });
+                    },
+                    ajax: {
+                        url: '/ApiAjax/GetListOrder',
+                        complete: function (response) {
 
-            success: function (result) {
-                for (var i = 0; i < result.length; i++) {
-                    var datetime = new Date(result[i].datetime);
-                    var dateChart = datetime.getDate() + "/" + (datetime.getMonth() + 1) + "/" + datetime.getFullYear();
+                        }
+                    },
+                    language: {
+                        url: '/Content/DataTables-1.10.20/js/Vietnamese.json?p=3'
+                    },
+                    columns: [
+                        {
+                            data: null,
+                            orderable: false,
+                            className: 'text-center',
+                            width: '21px'
+                        },
+                        {
+                            data: "RoleNumber",
+                            orderable: true,
+                            className: 'text-center',
+                            render: function (data, type, row, meta) {
+                                return row.RoleNumber;
+                            }
+                        },
+                        {
+                            data: "FullName",
+                            orderable: true,
+                            className: 'text-center',
+                            render: function (data, type, row, meta) {
+                                return row.FullName;
+                            }
+                        },
+                        {
+                            data: "Phone",
+                            orderable: true,
+                            className: 'text-center',
+                            render: function (data, type, row, meta) {
+                                return row.Phone;
+                            }
+                        },
+                        {
+                            data: "Quantity",
+                            orderable: true,
+                            className: 'text-center',
+                            render: function (data, type, row, meta) {
+                                return row.Quantity;
+                            }
+                        },
+                        {
+                            data: "TotalPrice",
+                            orderable: true,
+                            className: 'text-center',
+                            render: function (data, type, row, meta) {
+                                return row.TotalPrice;
+                            }
+                        },
+                        {
+                            data: "OrderDate",
+                            orderable: true,
+                            className: 'text-center',
+                            render: function (data, type, row, meta) {
+                                return row.OrderDate;
+                            }
+                        },
+                        {
+                            data: "Status",
+                            orderable: true,
+                            className: 'text-center',
+                            render: function (data, type, row, meta) {
+                                return row.Status;
+                            }
+                        }
+                    ],
+                    order: [],
+                    initComplete: function (setting, json) {
+                        dataTable = renderTable.rows().data();
+                        //console.log(data);
+                    }
+                });
 
-                    dataChart.push(dateChart);
-                    series.push(result[i].price);
-                }
+                addIndexCole(renderTable);
 
-                DrawChart();
+            }
+
+            function addIndexCole(table) {
+                table.on('order.dt search.dt', function () {
+                    table.column(0, {
+                        search: 'applied',
+                        order: 'applied',
+                        filter: 'applied'
+                    }).nodes().each(function (cell, i) {
+                        cell.innerHTML = i + 1;
+                    });
+                }).draw();
             }
         });
 
-        function DrawChart() {
-            Highcharts.chart('curve_chart', {
-                title: {
-                    text: 'Doanh thu từ ' + dataChart[0] + ' đến ' + dataChart[dataChart.length - 1]
-                },
+        //add a new filter
+        $(document).on('click', '.addFilterItem', function(event) {
+            event.stopImmediatePropagation();
 
-                subtitle: {
-                    text: 'Kết quả'
-                },
+            var filterTemp = $('.filterItem').last().clone();
+            //if ($('.filterItem').length > 0) {
+            //    $('.filterItem').find("#addFilterItem").remove();
+            //}
 
-                yAxis: {
-                    title: {
-                        text: 'Doanh số'
-                    }
-                },
+            //filterTemp.show();
+            //filterTemp.removeAttr("id");
+            //filterTemp.addClass('filterItem');
+            filterTemp.find('input').val('');
 
-                xAxis: [
-                    {
-                        categories: dataChart,
-                        labels: {
-                            formatter: function () {
-                                return '<span style="color:blue;">' + this.value + '</span>';
-                            },
-                            step: 3
-                        }
-                    }],
+            $('#FilterItemGroup').append(filterTemp);
+        });
 
-                legend: {
-                    layout: 'vertical',
-                    align: 'right',
-                    verticalAlign: 'middle'
-                },
+        //change content filter
+        $(document).on('click', '.filterItemChangeContent', function (event) {
+            if ($(this).attr('data-value') === 'false') {
+                $(this).parent().parent().find('button').text('Không chứa');
+                $(this).parent().parent().find('button').attr('data-value', 'false');
+                $(this).text('Chứa');
+                $(this).attr('data-value', 'true');
+            } else {
+                $(this).parent().parent().find('button').text('Chứa');
+                $(this).parent().parent().find('button').attr('data-value', 'true');
+                $(this).text('Không chứa');
+                $(this).attr('data-value', 'false');
+            }
 
-                plotOptions: {
-                    series: {
-                        label: {
-                            connectorAllowed: false
-                        },
-                    }
-                },
+            //$(this).parent().parent().find('button').dropdown('toggle');
+        });
 
-                series: [
-                    {
-                        name: 'Doanh số',
-                        data: series
-                    }],
+        //remove a filter
+        $(document).on('click', '.removeFilterItem', function (event) {
+            if ($('.filterItem').length > 1) {
+                $(this).parent().remove();
+            }
+        });
 
-                responsive: {
-                    rules: [{
-                        condition: {
-                            maxWidth: 500
-                        },
-                        chartOptions: {
-                            legend: {
-                                layout: 'horizontal',
-                                align: 'center',
-                                verticalAlign: 'bottom'
-                            }
-                        }
-                    }]
-                }
+        //Cancel filter
+        $(document).on('click', '#FilterItemCancel', function (event) {
+            renderTable.clear().rows.add(dataTable).draw();
+        });
 
-            });
-        }
-
-        RenderTable();
-        function RenderTable() {
-            renderTable = $('#table-order').DataTable({
-                dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
-                    "<'row'<'col-sm-12'tr>>" +
-                    "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
-                processing: true,
-                pagingType: "full_numbers",
-                drawCallback: function () {
-                    var i;
-                    $.each($('#table-order tbody tr td'), function () {
-                        $(this).attr("order-number", i);
-                    });
-                },
-                ajax: {
-                    url: '/ApiAjax/GetListOrder',
-                    complete: function (response) {
-
-                    }
-                },
-                language: {
-                    url: '/Content/DataTables-1.10.20/js/Vietnamese.json?p=3'
-                },
-                columns: [
-                    {
-                        data: null,
-                        orderable: false,
-                        className: 'text-center',
-                        width: '21px'
-                    },
-                    {
-                        data: "RoleNumber",
-                        orderable: true,
-                        className: 'text-center',
-                        render: function (data, type, row, meta) {
-                            return row.RoleNumber;
-                        }
-                    },
-                    {
-                        data: "FullName",
-                        orderable: true,
-                        className: 'text-center',
-                        render: function (data, type, row, meta) {
-                            return row.FullName;
-                        }
-                    },
-                    {
-                        data: "Phone",
-                        orderable: true,
-                        className: 'text-center',
-                        render: function (data, type, row, meta) {
-                            return row.Phone;
-                        }
-                    },
-                    {
-                        data: "Quantity",
-                        orderable: true,
-                        className: 'text-center',
-                        render: function (data, type, row, meta) {
-                            return row.Quantity;
-                        }
-                    },
-                    {
-                        data: "TotalPrice",
-                        orderable: true,
-                        className: 'text-center',
-                        render: function (data, type, row, meta) {
-                            return row.TotalPrice;
-                        }
-                    },
-                    {
-                        data: "OrderDate",
-                        orderable: true,
-                        className: 'text-center',
-                        render: function (data, type, row, meta) {
-                            return row.OrderDate;
-                        }
-                    },
-                    {
-                        data: "Status",
-                        orderable: true,
-                        className: 'text-center',
-                        render: function (data, type, row, meta) {
-                            return row.Status;
-                        }
-                    }
-                ],
-                order: [],
-                initComplete: function (setting, json) {
-                    //var data = json.data;
-                    //console.log(data);
+        //apply filter
+        $(document).on('click', '#FilterItemApply', function () {
+            console.log("dang chay");
+            var check = true;
+            $('.filterItem').each(function(index, item) {
+                var inputField = $(this).find('input');
+                if (inputField.val() === '') {
+                    inputField.addClass('border border-danger');
+                    check = false;
+                } else {
+                    inputField.removeClass('border border-danger');
                 }
             });
 
-            AddIndexCole(renderTable);
+            if (check) {
+                var filters = [];
 
-        }
+                //get filter
+                $('.filterItem').each(function(index, item) {
+                    var isContain = $(this).find('#filterItemContent').attr('data-value') === 'true' ? true : false;
+                    var containName = $(this).find('.txtFilterItemContent').val();
 
-        function AddIndexCole(table) {
-            table.on('order.dt search.dt', function () {
-                table.column(0, {
-                    search: 'applied',
-                    order: 'applied',
-                    filter: 'applied'
-                }).nodes().each(function (cell, i) {
-                    cell.innerHTML = i + 1;
+                    filters.push({ isContain: isContain, containName: containName });
                 });
-            }).draw();
-        }
 
+                //filter current data
+                var filterData = dataTable.filter(row => {
+                    var filterCheck;
+                    $.each(filters, function(index, item) {
+                        filterCheck = row.FullName.toLowerCase().includes(item.containName.toLowerCase())
+                            ? item.isContain
+                            : !item.isContain;
+
+                        return filterCheck;
+                    });
+
+                    return filterCheck;
+                });
+
+                renderTable.clear().rows.add(filterData).draw();
+            }
+        });
     </script>
 }
 

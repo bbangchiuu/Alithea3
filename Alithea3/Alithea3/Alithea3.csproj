@@ -2546,6 +2546,7 @@
     <Content Include="Views\Attributes\Edit.cshtml" />
     <Content Include="Views\Attributes\Index.cshtml" />
     <Content Include="Views\Dashboard\Index.cshtml" />
+    <Content Include="Views\Dashboard\__HightChart.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
