@@ -12,6 +12,7 @@ using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using Alithea3.Controllers.Service.ShopManager;
 using Alithea3.Models;
+using Alithea3.Models.ViewModel;
 using Newtonsoft.Json;
 
 namespace Alithea3.Controllers
@@ -93,15 +94,15 @@ namespace Alithea3.Controllers
             }
 
             Customer customer = new Customer();
-            if (Session[SessionName.UserAccount] != null)
+            if (SessionInfo.Currentuser != null)
             {
                 try
                 {
-                    UserAccount userAccount = Session[SessionName.UserAccount] as UserAccount;
-                    customer.FullName = userAccount.FullName;
-                    customer.Email = userAccount.Email;
-                    customer.Address = userAccount.Address;
-                    customer.Phone = userAccount.Phone;
+                    //UserAccount userAccount = Session[SessionName.UserAccount] as UserAccount;
+                    customer.FullName = SessionInfo.Currentuser.Name;
+                    customer.Email = SessionInfo.Currentuser.Email;
+                    customer.Address = SessionInfo.Currentuser.Address;
+                    customer.Phone = SessionInfo.Currentuser.Phone;
                 }
                 catch (Exception e)
                 {
@@ -180,12 +181,20 @@ namespace Alithea3.Controllers
             //HttpCookie addressCookie = Request.Cookies["Address"];
 
             if (_shopService.createOrder(Session[SessionName.ShoppingCart] as List<Product>, createAt, Session[SessionName.Customer] as Customer,
-                (int) Session[SessionName.TotalQuantity], (double) Session[SessionName.TotalPrice], comment,
-                (Session[SessionName.UserAccount] as UserAccount)?.UserID))
+                (int) Session[SessionName.TotalQuantity], (double) Session[SessionName.TotalPrice], comment, SessionInfo.Currentuser?.Id))
             {
                 var result = SendEmail(createAt.ToFileTimeUtc().ToString(), (Session[SessionName.Customer] as Customer)?.Email);
                 Debug.WriteLine("result: " + result);
-                
+
+                //if (result)
+                //{
+                //    DeleteSession();
+                //    TempData["Success"] = "Đặt hàng thành công";
+                //    TempData["RollNumber"] = createAt.ToFileTimeUtc().ToString();
+                //    TempData["Email"] = (Session[SessionName.Customer] as Customer)?.Email;
+
+                //    return Redirect("/BuyItem/Success");
+                //}
                 DeleteSession();
                 TempData["Success"] = "Đặt hàng thành công";
                 TempData["RollNumber"] = createAt.ToFileTimeUtc().ToString();
@@ -219,10 +228,10 @@ namespace Alithea3.Controllers
             return View();
         }
 
-        public async Task<JsonResult> SendEmail(string rollnumber, string _email)
+        public bool SendEmail(string rollnumber, string _email)
         {
-            string senderID = "bangnguyenzero@gmail.com";
-            string senderPassword = "Bang@123";
+            string senderID = "nguyenhaibangbkn@gmail.com";
+            string senderPassword = "lkbnymugdxshtvjq";
             string result = "Email Sent Successfully";
 
             string body = "Đơn hàng #" + rollnumber + " đã sẵn sàng giao đến quý khách";
@@ -245,8 +254,10 @@ namespace Alithea3.Controllers
             {
                 result = "problem occurred";
                 Response.Write("Exception in sendEmail:" + ex.Message);
+                return false;
             }
-            return Json(result);
+
+            return true;
         }
     }
 }

@@ -17,37 +17,37 @@ namespace Alithea3.Controllers
         private MyDbContext db = new MyDbContext();
 
 
-        public bool CheckUser()
-        {
-
-            UserAccount userAccount = new UserAccount();
-            if (Session[SessionName.UserAccount] != null)
-            {
-                userAccount = Session[SessionName.UserAccount] as UserAccount;
-            }
-            else
-            {
-                return false;
-            }
-
-            Debug.WriteLine("admin: " + userAccount.admin);
-
-            if (userAccount.admin == null || userAccount.admin == 0)
-            {
-                Debug.WriteLine("Dang chay");
-                return false;
-            }
-
-            return true;
-        }
+//        public bool CheckUser()
+//        {
+//
+//            UserAccount userAccount = new UserAccount();
+//            if (Session[SessionName.UserAccount] != null)
+//            {
+//                userAccount = Session[SessionName.UserAccount] as UserAccount;
+//            }
+//            else
+//            {
+//                return false;
+//            }
+//
+//            Debug.WriteLine("admin: " + userAccount.admin);
+//
+//            if (userAccount.admin == null || userAccount.admin == 0)
+//            {
+//                Debug.WriteLine("Dang chay");
+//                return false;
+//            }
+//
+//            return true;
+//        }
 
         // GET: OrderDetails
         public ActionResult Index()
         {
-            if (!CheckUser())
-            {
-                return Redirect("/Home/Login");
-            }
+//            if (!CheckUser())
+//            {
+//                return Redirect("/Home/Login");
+//            }
 
             var orderDetails = db.OrderDetails.Include(o => o.Order).Include(o => o.Product);
             return View(orderDetails.ToList());
@@ -56,10 +56,10 @@ namespace Alithea3.Controllers
         // GET: OrderDetails/Details/5
         public ActionResult Details(int? id)
         {
-            if (!CheckUser())
-            {
-                return Redirect("/Home/Login");
-            }
+//            if (!CheckUser())
+//            {
+//                return Redirect("/Home/Login");
+//            }
 
             if (id == null)
             {

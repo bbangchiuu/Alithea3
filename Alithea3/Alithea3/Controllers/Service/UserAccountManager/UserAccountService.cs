@@ -7,6 +7,8 @@ using System.Text;
 using System.Web;
 using Alithea3.Controllers.Respository.UserAccountManager;
 using Alithea3.Models;
+using Microsoft.Ajax.Utilities;
+
 namespace Alithea3.Controllers.Service.UserAccountManager
 {
     public class UserAccountService : BaseService<UserAccount>
@@ -19,6 +21,10 @@ namespace Alithea3.Controllers.Service.UserAccountManager
         {
             userAccount.RoleNumber = DateTime.Now.ToFileTimeUtc().ToString();
             userAccount.admin = UserAccount.Decentralization.Customer;
+            if (userAccount.Password.IsNullOrWhiteSpace())
+            {
+                userAccount.Password = "123456";
+            }
             userAccount.Password = HasPass(userAccount.Password);
             userAccount.CreatAt = DateTime.Now;
             userAccount.UpdateAt = DateTime.Now;

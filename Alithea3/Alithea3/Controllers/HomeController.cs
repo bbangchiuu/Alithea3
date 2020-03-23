@@ -4,8 +4,10 @@ using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using Alithea3.Controllers.Service.AttributeManager;
@@ -15,9 +17,12 @@ using Alithea3.Controllers.Service.ProductManager;
 using Alithea3.Controllers.Service.ShopManager;
 using Alithea3.Controllers.Service.UserAccountManager;
 using Alithea3.Models;
+using Alithea3.Models.ViewModel;
 using Facebook;
 using LinqKit;
 using Microsoft.Ajax.Utilities;
+using Microsoft.AspNet.Identity;
+using Microsoft.Owin.Security;
 using Attribute = System.Attribute;
 
 namespace Alithea3.Controllers
@@ -167,7 +172,18 @@ namespace Alithea3.Controllers
             var getUserAccount = _userAccountService.UserAccountLogin(userAccount.Username, userAccount.Password);
             if (getUserAccount != null)
             {
-                Session[SessionName.UserAccount] = getUserAccount;
+                getUserAccount.Password = "";
+                //Session[SessionName.UserAccount] = getUserAccount;
+                SetUserLogin(new LoginInfo
+                {
+                    Email = getUserAccount.Email,
+                    Name = getUserAccount.FullName,
+                    Id = getUserAccount.UserID,
+                    Image = getUserAccount.Image,
+                    Phone = getUserAccount.Phone,
+                    Address = getUserAccount.Address
+                });
+
                 if (!ReturnUrl.IsNullOrWhiteSpace())
                 {
                     return Redirect(ReturnUrl);
@@ -306,17 +322,18 @@ namespace Alithea3.Controllers
             return View(listCategories);
         }
 
-        public ActionResult DeleteSessionUser()
+        public ActionResult LogOff()
         {
             Session[SessionName.UserAccount] = null;
             Session[SessionName.Customer] = null;
+            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             return Redirect("/Home/Index");
         }
 
         public bool CheckUser()
         {
-            UserAccount userAccount = Session[SessionName.UserAccount] as UserAccount;
-            if (userAccount != null)
+            //UserAccount userAccount = Session[SessionName.UserAccount] as UserAccount;
+            if (HttpContext.Request.IsAuthenticated)
             {
                 return true;
             }
@@ -324,96 +341,215 @@ namespace Alithea3.Controllers
             return false;
         }
 
+        //login bang ung dung khac
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public ActionResult ExternalLogin(string provider, string returnUrl)
+        {
+            // Request a redirect to the external login provider
+            return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "Home", new { ReturnUrl = returnUrl }));
+        }
+
+        [AllowAnonymous]
+        public async Task<ActionResult> ExternalLoginCallback(string returnUrl)
+        {
+            var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync();
+            if (loginInfo == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            var checkuser = db.UserAccounts.FirstOrDefault(t => t.Email == loginInfo.Email || t.Username == loginInfo.Email);
+            UserAccount currentUser = null;
+            if (checkuser == null)
+            {
+                if (_userAccountService.createAccount(new UserAccount
+                {
+                    Email = loginInfo.Email,
+                    Username = loginInfo.Email,
+                    FullName = loginInfo.DefaultUserName,
+                    loginType = UserAccount.TypeLogin.Google, //tạm thời để mặc định, chưa fix
+                    BirthDay = DateTime.Now,
+                }))
+                {
+                    currentUser = db.UserAccounts.FirstOrDefault(t => t.Email == loginInfo.Email);
+                }
+                else
+                {
+                    TempData["Error"] = "Đã xảy ra lỗi";
+                    return Redirect("/Home/Login");
+                }
+            }
+            else if(checkuser.loginType == UserAccount.TypeLogin.Default || checkuser.loginType == null)
+            {
+                TempData["Error"] = "Tài khoản này đã tồn tại, hãy đăng nhâp bằng email hoặc username và mật khẩu";
+                return Redirect("/Home/Login");
+            }
+            else
+            {
+                currentUser = checkuser;
+            }
+
+            if (currentUser == null)
+            {
+                TempData["Error"] = "Đã xảy ra lỗi";
+                return Redirect("/Home/Login");
+            }
+
+
+
+            var user = new LoginInfo
+            {
+                Id = currentUser.UserID,
+                Email = currentUser.Email,
+                Name = currentUser.FullName,
+                Phone = currentUser.Phone,
+                Address = currentUser.Address,
+                Image = currentUser.Image
+            };
+            SetUserLogin(user);
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        private void SetUserLogin(LoginInfo model)
+        {
+            var json = Newtonsoft.Json.JsonConvert.SerializeObject(model);
+            var identity = new ClaimsIdentity(DefaultAuthenticationTypes.ApplicationCookie);
+            identity.AddClaim(new Claim(ClaimTypes.Name, json));
+            AuthenticationManager.SignIn(new AuthenticationProperties() { IsPersistent = true }, identity);
+        }
+
+        private const string XsrfKey = "XsrfId";
+        private IAuthenticationManager AuthenticationManager
+        {
+            get
+            {
+                return HttpContext.GetOwinContext().Authentication;
+            }
+        }
+
+        internal class ChallengeResult : HttpUnauthorizedResult
+        {
+            public ChallengeResult(string provider, string redirectUri)
+                : this(provider, redirectUri, null)
+            {
+            }
+
+            public ChallengeResult(string provider, string redirectUri, string userId)
+            {
+                LoginProvider = provider;
+                RedirectUri = redirectUri;
+                UserId = userId;
+            }
+
+            public string LoginProvider { get; set; }
+            public string RedirectUri { get; set; }
+            public string UserId { get; set; }
+
+            public override void ExecuteResult(ControllerContext context)
+            {
+                var properties = new AuthenticationProperties { RedirectUri = RedirectUri };
+                if (UserId != null)
+                {
+                    properties.Dictionary[XsrfKey] = UserId;
+                }
+                context.HttpContext.GetOwinContext().Authentication.Challenge(properties, LoginProvider);
+            }
+        }
+
+
         /// <summary>
         /// start login facebook
         /// </summary>
         /// <returns></returns>
-        public ActionResult LoginFacebook()
-        {
-            var fb = new FacebookClient();
-            var loginUrl = fb.GetLoginUrl(new
-            {
-                client_id = ConfigurationManager.AppSettings["FbAppId"],
-                client_secret = ConfigurationManager.AppSettings["FbAppSecret"],
-                redirect_uri = RedirectUri.AbsoluteUri,
-                response_type = "code",
-                scope = "email",
-            });
-            Debug.WriteLine("loginUrl.AbsoluteUri");
-            Debug.WriteLine(loginUrl.AbsoluteUri);
-            return Redirect(loginUrl.AbsoluteUri);
-        }
-
-        private Uri RedirectUri
-        {
-            get
-            {
-                var uriBuilder = new UriBuilder(Request.Url);
-                uriBuilder.Query = null;
-                uriBuilder.Fragment = null;
-                uriBuilder.Path = Url.Action("FacebookCallback");
-                return uriBuilder.Uri;
-            }
-        }
-
-        public ActionResult FacebookCallback(string code)
-        {
-            var fb = new FacebookClient();
-            dynamic result = fb.Post("oauth/access_token", new
-            {
-                client_id = ConfigurationManager.AppSettings["FbAppId"],
-                client_secret = ConfigurationManager.AppSettings["FbAppSecret"],
-                redirect_uri = RedirectUri.AbsoluteUri,
-                code = code
-            });
-
-
-            var accessToken = result.access_token;
-            if (!string.IsNullOrEmpty(accessToken))
-            {
-                fb.AccessToken = accessToken;
-                // Get the user's information, like email, first name, middle name etc
-                dynamic me = fb.Get("me?fields=first_name,middle_name,last_name,id,email");
-                string email = me.email;
-                string userName = me.email;
-                string firstname = me.first_name;
-                string middlename = me.middle_name;
-                string lastname = me.last_name;
-
-                var user = new UserAccount();
-                
-                var checkAccount = _userAccountService.CheckAccount(email);
-                if (checkAccount == null)
-                {
-                    user.Email = email;
-                    user.RoleNumber = DateTime.Now.ToFileTimeUtc().ToString();
-                    user.CreatAt = DateTime.Now;
-                    user.UpdateAt = DateTime.Now;
-                    user.BirthDay = DateTime.Now;
-                    user.loginType = UserAccount.TypeLogin.Facebook;
-                    user.Username = userName;
-                    user.Status = UserAccount.UserAccountStatus.Active;
-                    user.FullName = firstname + " " + middlename + " " + lastname;
-                    user.Password = Guid.NewGuid().ToString();
-                    _userAccountService.createAccount(user);
-
-                    Session.Add(SessionName.UserAccount, user);
-                    return Redirect("/");
-                }
-
-                if (checkAccount.loginType == UserAccount.TypeLogin.Facebook)
-                {
-                    Session.Add(SessionName.UserAccount, checkAccount);
-                    return Redirect("/");
-                }
-               
-                TempData["Error"] = "Tài khoản này đã tồn tại, bạn phải đằng nhập bằng tài khoản và mật khẩu";
-                return Redirect("/Home/Login");
-            }
-
-            TempData["Error"] = "Đã xảy ra lỗi";
-            return Redirect("/Home/Login");
-        }
+        //        public ActionResult LoginFacebook()
+        //        {
+        //            var fb = new FacebookClient();
+        //            var loginUrl = fb.GetLoginUrl(new
+        //            {
+        //                client_id = ConfigurationManager.AppSettings["FbAppId"],
+        //                client_secret = ConfigurationManager.AppSettings["FbAppSecret"],
+        //                redirect_uri = RedirectUri.AbsoluteUri,
+        //                response_type = "code",
+        //                scope = "email",
+        //            });
+        //            Debug.WriteLine("loginUrl.AbsoluteUri");
+        //            Debug.WriteLine(loginUrl.AbsoluteUri);
+        //            return Redirect(loginUrl.AbsoluteUri);
+        //        }
+        //
+        //        private Uri RedirectUri
+        //        {
+        //            get
+        //            {
+        //                var uriBuilder = new UriBuilder(Request.Url);
+        //                uriBuilder.Query = null;
+        //                uriBuilder.Fragment = null;
+        //                uriBuilder.Path = Url.Action("FacebookCallback");
+        //                return uriBuilder.Uri;
+        //            }
+        //        }
+        //
+        //        public ActionResult FacebookCallback(string code)
+        //        {
+        //            var fb = new FacebookClient();
+        //            dynamic result = fb.Post("oauth/access_token", new
+        //            {
+        //                client_id = ConfigurationManager.AppSettings["FbAppId"],
+        //                client_secret = ConfigurationManager.AppSettings["FbAppSecret"],
+        //                redirect_uri = RedirectUri.AbsoluteUri,
+        //                code = code
+        //            });
+        //
+        //
+        //            var accessToken = result.access_token;
+        //            if (!string.IsNullOrEmpty(accessToken))
+        //            {
+        //                fb.AccessToken = accessToken;
+        //                // Get the user's information, like email, first name, middle name etc
+        //                dynamic me = fb.Get("me?fields=first_name,middle_name,last_name,id,email");
+        //                string email = me.email;
+        //                string userName = me.email;
+        //                string firstname = me.first_name;
+        //                string middlename = me.middle_name;
+        //                string lastname = me.last_name;
+        //
+        //                var user = new UserAccount();
+        //                
+        //                var checkAccount = _userAccountService.CheckAccount(email);
+        //                if (checkAccount == null)
+        //                {
+        //                    user.Email = email;
+        //                    user.RoleNumber = DateTime.Now.ToFileTimeUtc().ToString();
+        //                    user.CreatAt = DateTime.Now;
+        //                    user.UpdateAt = DateTime.Now;
+        //                    user.BirthDay = DateTime.Now;
+        //                    user.loginType = UserAccount.TypeLogin.Facebook;
+        //                    user.Username = userName;
+        //                    user.Status = UserAccount.UserAccountStatus.Active;
+        //                    user.FullName = firstname + " " + middlename + " " + lastname;
+        //                    user.Password = Guid.NewGuid().ToString();
+        //                    _userAccountService.createAccount(user);
+        //
+        //                    Session.Add(SessionName.UserAccount, user);
+        //                    return Redirect("/");
+        //                }
+        //
+        //                if (checkAccount.loginType == UserAccount.TypeLogin.Facebook)
+        //                {
+        //                    Session.Add(SessionName.UserAccount, checkAccount);
+        //                    return Redirect("/");
+        //                }
+        //               
+        //                TempData["Error"] = "Tài khoản này đã tồn tại, bạn phải đằng nhập bằng tài khoản và mật khẩu";
+        //                return Redirect("/Home/Login");
+        //            }
+        //
+        //            TempData["Error"] = "Đã xảy ra lỗi";
+        //            return Redirect("/Home/Login");
+        //        }
 
         //end login facebook
     }

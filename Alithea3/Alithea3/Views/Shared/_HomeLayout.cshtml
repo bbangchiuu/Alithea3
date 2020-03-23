@@ -1,13 +1,19 @@
 ﻿@using Alithea3.Models
+@using Alithea3.Models.ViewModel
 @{
-    UserAccount userAccount = new UserAccount();
-    if (Session[SessionName.UserAccount] != null)
+    //    UserAccount userAccount = new UserAccount();
+    //    if (Session[SessionName.UserAccount] != null)
+    //    {
+    //        userAccount = Session[SessionName.UserAccount] as UserAccount;
+    //    }
+    //    else
+    //    {
+    //        userAccount = null;
+    //    }
+    LoginInfo currentUser = null;
+    if (HttpContext.Current.Request.IsAuthenticated)
     {
-        userAccount = Session[SessionName.UserAccount] as UserAccount;
-    }
-    else
-    {
-        userAccount = null;
+        currentUser = SessionInfo.Currentuser;
     }
 }
 <!DOCTYPE html>
@@ -73,20 +79,20 @@
                 <a href="#" class="xehang wow bounceIn" data-wow-delay="0.5s">
                     <i class="fa fa-shopping-cart"></i>
                 </a>
-                @if (userAccount != null)
+                @if (currentUser != null)
                 {
                     <li class="drd bounceIn" data-wow-delay="0.6s" style="margin-right: 17%;">
                         <div class="dropdown" style="margin-top: -6.5px;">
                             <div class="btn btn-secondary" data-toggle="dropdown">
-                                @userAccount.FullName
+                                @currentUser.Name
                             </div>
 
                             <div class="dropdown-menu">
-                                <a class="dropdown-item" href="/Home/DeleteSessionUser">Đăng xuất</a>
-                                @if (userAccount.admin == UserAccount.Decentralization.Admin)
-                                {
-                                    <a class="dropdown-item" href="/Dashboard">Admin</a>
-                                }
+                                <a class="dropdown-item" href="/Home/LogOff">Đăng xuất</a>
+@*                                 @if (currentUser.admin == UserAccount.Decentralization.Admin) *@
+@*                                 { *@
+@*                                     <a class="dropdown-item" href="/Dashboard">Admin</a> *@
+@*                                 } *@
                             </div>
                         </div>
                     </li>

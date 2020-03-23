@@ -6,6 +6,7 @@ using System.Web;
 using System.Web.Mvc;
 using Alithea3.Controllers.Service.UserAccountManager;
 using Alithea3.Models;
+using Alithea3.Models.ViewModel;
 
 namespace Alithea3.Controllers
 {
@@ -17,7 +18,7 @@ namespace Alithea3.Controllers
 
         protected override bool AuthorizeCore(HttpContextBase httpContext)
         {
-            var userAccount = (UserAccount)HttpContext.Current.Session[SessionName.UserAccount];
+            var userAccount = SessionInfo.Currentuser;
             if (userAccount == null)
             {
                 return false;
@@ -29,7 +30,7 @@ namespace Alithea3.Controllers
             }
             else
             {
-                List<int> UserRole = db.UserAccountRoles.Where(ur => ur.UserID == userAccount.UserID)
+                List<int> UserRole = db.UserAccountRoles.Where(ur => ur.UserID == userAccount.Id)
                     .Select(ur => ur.RoleId).ToList();
 
                 for (int i = 0; i < RoleId.Length; i++)

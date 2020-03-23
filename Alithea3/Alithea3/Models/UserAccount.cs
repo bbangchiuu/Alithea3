@@ -90,6 +90,7 @@ namespace Alithea3.Models
         public TypeLogin? loginType { get; set; }
         public enum TypeLogin
         {
+            Default = 0,
             Facebook = 1,
             Google = 2,
             Twitter = 3

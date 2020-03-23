@@ -16,10 +16,10 @@ namespace Alithea3.Controllers
         }
 
         [HttpPost]
-        public JsonResult SendEmail(string _name, string _phone, string _email, string _description)
+        public bool SendEmail(string _name, string _phone, string _email, string _description)
         {
-            string senderID = "bangnguyenzero@gmail.com";
-            string senderPassword = "Bang@123";
+            string senderID = "nguyenhaibangbkn@gmail.com";
+            string senderPassword = "lkbnymugdxshtvjq";
             string result = "Email Sent Successfully";
 
             string body = " " + _name + " has sent an email from " + _email;
@@ -44,8 +44,10 @@ namespace Alithea3.Controllers
             {
                 result = "problem occurred";
                 Response.Write("Exception in sendEmail:" + ex.Message);
+
+                return false;
             }
-            return Json(result);
+            return true;
         }
 
     }

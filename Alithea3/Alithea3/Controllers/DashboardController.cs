@@ -6,6 +6,7 @@ using System.Web.Mvc;
 
 namespace Alithea3.Controllers
 {
+    [Author]
     public class DashboardController : Controller
     {
         // GET: Dashboaed
