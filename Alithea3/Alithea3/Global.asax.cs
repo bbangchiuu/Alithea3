@@ -8,6 +8,7 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using Alithea3.DailyJob;
 
 namespace Alithea3
 {
@@ -22,6 +23,8 @@ namespace Alithea3
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
             AntiForgeryConfig.UniqueClaimTypeIdentifier = ClaimsIdentity.DefaultNameClaimType;
+
+            _ = OurScheduler.Start();
         }
     }
 }

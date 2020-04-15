@@ -207,3 +207,6 @@ E:\dotNet_MVC\Alithea3\Alithea3\Alithea3\bin\Microsoft.Owin.Security.Cookies.xml
 E:\dotNet_MVC\Alithea3\Alithea3\Alithea3\bin\Microsoft.Owin.Security.Facebook.xml
 E:\dotNet_MVC\Alithea3\Alithea3\Alithea3\bin\Microsoft.Owin.Security.Google.xml
 E:\dotNet_MVC\Alithea3\Alithea3\Alithea3\bin\Microsoft.Owin.Security.OAuth.xml
+E:\dotNet_MVC\Alithea3\Alithea3\Alithea3\bin\Quartz.dll
+E:\dotNet_MVC\Alithea3\Alithea3\Alithea3\bin\Quartz.pdb
+E:\dotNet_MVC\Alithea3\Alithea3\Alithea3\bin\Quartz.xml
