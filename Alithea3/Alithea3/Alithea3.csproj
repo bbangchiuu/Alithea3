@@ -249,7 +249,10 @@
     <Compile Include="Models\ViewModel\LoginInfo.cs" />
     <Compile Include="Models\ViewModel\OrdersViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ScheduleJob\JobDe.cs" />
+    <Compile Include="ScheduleJob\Schedule.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="WriteLog\WriteFile.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\assets\css\style.css" />

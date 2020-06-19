@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Script.Serialization;
 using Alithea3.Controllers.Service.OrderManager;
 using Alithea3.Models;
 using Alithea3.Models.ViewModel;
@@ -45,5 +47,30 @@ namespace Alithea3.Controllers.Api
 
             return Json(new {data = orders}, JsonRequestBehavior.AllowGet);
         }
+
+        public ActionResult GetDataTest(Classtest model)
+        {
+            try
+            {
+                Debug.WriteLine(model.username);
+            }
+            catch
+            {
+                Debug.WriteLine("loi");
+            }
+            
+            var data = db.Categories.Find(1);
+            if(data != null)
+            {
+                return Json(new JavaScriptSerializer().Serialize(data), JsonRequestBehavior.AllowGet);
+            }
+
+            return Json("Khong ton tai", JsonRequestBehavior.AllowGet);
+        }
+    }
+
+    public class Classtest
+    {
+        public string username { get; set; }
     }
 }

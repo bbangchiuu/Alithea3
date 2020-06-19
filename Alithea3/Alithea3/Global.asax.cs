@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -24,7 +24,8 @@ namespace Alithea3
 
             AntiForgeryConfig.UniqueClaimTypeIdentifier = ClaimsIdentity.DefaultNameClaimType;
 
-            _ = OurScheduler.Start();
+            _ = OurScheduler.Start();//chay lien tuc, 5 phut(thoi gian da setup) se chay 1 lan
+            _ = ScheduleJob.Schedule.Start();//đặt lịch, khi nào đến thời gian đó sẽ chạy
         }
     }
 }
