@@ -17,7 +17,7 @@ namespace Alithea3.Controllers
             //var test = System.Web.HttpUtility.UrlDecode(url);
             //Debug.WriteLine(test);
 
-            var test = new TestService();
+            ITestService test = new TestService();
             return Json(new { data = test.get() }, JsonRequestBehavior.AllowGet);
         }
     }
