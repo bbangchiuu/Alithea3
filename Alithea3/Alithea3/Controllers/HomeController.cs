@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Diagnostics;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
@@ -18,12 +17,10 @@ using Alithea3.Controllers.Service.ShopManager;
 using Alithea3.Controllers.Service.UserAccountManager;
 using Alithea3.Models;
 using Alithea3.Models.ViewModel;
-using Facebook;
-using LinqKit;
 using Microsoft.Ajax.Utilities;
 using Microsoft.AspNet.Identity;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.Owin.Security;
-using Attribute = System.Attribute;
 
 namespace Alithea3.Controllers
 {
@@ -173,7 +170,6 @@ namespace Alithea3.Controllers
             if (getUserAccount != null)
             {
                 getUserAccount.Password = "";
-                //Session[SessionName.UserAccount] = getUserAccount;
                 SetUserLogin(new LoginInfo
                 {
                     Email = getUserAccount.Email,
@@ -200,13 +196,63 @@ namespace Alithea3.Controllers
             return View();
         }
 
-        public ActionResult Register()
+        [HttpPost]
+        public ActionResult Testlogin([Bind(Include = "Username,Password")] UserAccount userAccount)
         {
-            if (CheckUser())
+            var errors = userAccount.ValidateLogin();
+            if (errors.Count > 0)
             {
-                return Redirect("/Home/Index");
+                return Json(new { data = "false" }, JsonRequestBehavior.AllowGet);
             }
 
+            var getUserAccount = _userAccountService.UserAccountLogin(userAccount.Username, userAccount.Password);
+            if (getUserAccount != null)
+            {
+                getUserAccount.Password = "";
+                var model = new LoginInfo
+                {
+                    Email = getUserAccount.Email,
+                    Name = getUserAccount.FullName,
+                    Id = getUserAccount.UserID,
+                    Image = getUserAccount.Image,
+                    Phone = getUserAccount.Phone,
+                    Address = getUserAccount.Address
+                };
+
+                var token = generateJwtToken(model);
+                return Json(new
+                {
+                    data = model,
+                    token = token
+                }, JsonRequestBehavior.AllowGet);
+            }
+
+            return Json(new { data = "false" }, JsonRequestBehavior.AllowGet);
+        }
+        
+        [Author2]
+        public ActionResult TestGetData()
+        {
+            return Json("ok", JsonRequestBehavior.AllowGet);
+        }
+
+        private string generateJwtToken(LoginInfo user)
+        {
+            // generate token that is valid for 7 days
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes("asdadasfsgewrgwege");
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[] { new Claim("id", user.Id.ToString()) }),
+                Expires = DateTime.UtcNow.AddDays(7),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
+        }
+
+        public ActionResult Register()
+        {
             return View();
         }
 
@@ -330,17 +376,6 @@ namespace Alithea3.Controllers
             return Redirect("/Home/Index");
         }
 
-        public bool CheckUser()
-        {
-            //UserAccount userAccount = Session[SessionName.UserAccount] as UserAccount;
-            if (HttpContext.Request.IsAuthenticated)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
         //login bang ung dung khac
         [HttpPost]
         [AllowAnonymous]
@@ -396,8 +431,6 @@ namespace Alithea3.Controllers
                 TempData["Error"] = "Đã xảy ra lỗi";
                 return Redirect("/Home/Login");
             }
-
-
 
             var user = new LoginInfo
             {

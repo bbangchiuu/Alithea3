@@ -97,8 +97,7 @@ namespace Alithea3.Controllers
             if (SessionInfo.Currentuser != null)
             {
                 try
-                {
-                    //UserAccount userAccount = Session[SessionName.UserAccount] as UserAccount;
+                {  
                     customer.FullName = SessionInfo.Currentuser.Name;
                     customer.Email = SessionInfo.Currentuser.Email;
                     customer.Address = SessionInfo.Currentuser.Address;

@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Web.Http;
+using Alithea3.Helper;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.Google;
+using Microsoft.Owin.Security.OAuth;
 using Owin;
 
 [assembly: OwinStartup(typeof(Alithea3.Startup))]
@@ -38,6 +41,22 @@ namespace Alithea3
                 //                        regenerateIdentity: (manager, user) => user.GenerateUserIdentityAsync(manager))
                 //                }
             });
+            OAuthAuthorizationServerOptions options = new OAuthAuthorizationServerOptions
+            {
+                AllowInsecureHttp = true,
+                //The Path For generating the Toekn
+                TokenEndpointPath = new PathString("/token"),
+                //Setting the Token Expired Time (24 hours)
+                AccessTokenExpireTimeSpan = TimeSpan.FromDays(1),
+                //MyAuthorizationServerProvider class will validate the user credentials
+                Provider = new MyAuthorizationServerProvider()
+            };
+            app.UseOAuthAuthorizationServer(options);
+            app.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions());
+
+            HttpConfiguration config = new HttpConfiguration();
+            WebApiConfig.Register(config);
+
             app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
 
             // Enables the application to temporarily store user information when they are verifying the second factor in the two-factor authentication process.

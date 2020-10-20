@@ -1,15 +1,6 @@
 ﻿@using Alithea3.Models
 @using Alithea3.Models.ViewModel
 @{
-    //    UserAccount userAccount = new UserAccount();
-    //    if (Session[SessionName.UserAccount] != null)
-    //    {
-    //        userAccount = Session[SessionName.UserAccount] as UserAccount;
-    //    }
-    //    else
-    //    {
-    //        userAccount = null;
-    //    }
     LoginInfo currentUser = null;
     if (HttpContext.Current.Request.IsAuthenticated)
     {
